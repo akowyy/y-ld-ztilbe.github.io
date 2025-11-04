@@ -18,9 +18,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-size: cover;       /* Tam ekran kapsar */
-    background-position: center;  /* Ortalanır */
-    background-repeat: no-repeat; /* Tekrar etmez */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
   }
 
@@ -32,6 +32,8 @@
     box-shadow: 0 0 15px rgba(0,0,0,0.3);
     z-index: 2;
     position: relative;
+    width: 90%;
+    max-width: 500px;
   }
 
   h1 {
@@ -53,16 +55,18 @@
     position: relative;
   }
 
-  #yesButton {
-    background-color: #001f7a;
-    color: white;
-  }
-
+  #yesButton { background-color: #001f7a; color: white; }
   #yesButton:hover { transform: scale(1.1); }
+  #noButton { background-color: #ffd700; color: black; }
 
-  #noButton {
-    background-color: #ffd700;
-    color: black;
+  textarea {
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 20px;
+    border-radius: 12px;
+    border: 2px solid #001f7a;
+    resize: none;
   }
 
   @keyframes shake {
@@ -98,75 +102,115 @@
 </div>
 
 <script>
-  const container = document.getElementById('container');
-  const yesButton = document.getElementById('yesButton');
-  const noButton = document.getElementById('noButton');
-  const message = document.getElementById('message');
-  const song = document.getElementById('song');
+const container = document.getElementById('container');
+const yesButton = document.getElementById('yesButton');
+const noButton = document.getElementById('noButton');
+const message = document.getElementById('message');
+const song = document.getElementById('song');
 
-  // Sayfalar dizisi
-  const pages = [
-    { question: "Özledin mi?", animation: ['❤️'], background: 'ask.jpg', no: true },
-    { question: "Sinirin geçti", animation: ['🌸'], background: '2. sayfa.jpg', no: true },
-    { question: "Barışma küslük bitirme butonu", animation: ['❤️','🌸','🧿'], background: 'orta.png', no: true },
-    { question: "553 838 9999\nMesajın bekleniyor", animation: ['❤️','🌸','🧿','📱'], background: 'final.png', no: false }
-  ];
+const pages = [
+  { question: "Özledin mi?", animation: ['❤️'], background: 'ask.jpg', no: true },
+  { question: "Sinirin geçti", animation: ['🌸'], background: '2. sayfa.jpg', no: true },
+  { question: "Barışma küslük bitirme butonu", animation: ['❤️','🌸','🧿'], background: 'orta.png', no: true },
+  { question: "553 838 9999\nMesajın bekleniyor", animation: ['❤️','🌸','🧿','📱'], background: 'final.png', no: false },
+  { question: "Ben bencil biri değilim", animation: [], background: 'arka_yaz.png', no: false, input: true } // 5. sayfa
+];
 
-  let currentPage = 0;
-  const noPositions = ['0px','80px','-80px'];
-  let currentNoPos = 0;
+let currentPage = 0;
+const noPositions = ['0px','80px','-80px'];
+let currentNoPos = 0;
+let musicStarted = false;
 
-  function setBodyHeight() {
-    document.body.style.height = window.innerHeight + "px";
-  }
-  window.addEventListener('resize', setBodyHeight);
-  setBodyHeight();
+function setBodyHeight() { document.body.style.height = window.innerHeight + "px"; }
+window.addEventListener('resize', setBodyHeight);
+setBodyHeight();
 
-  function loadPage(index){
-    const page = pages[index];
-    message.innerText = page.question;
-    document.body.style.backgroundImage = `url('${page.background}')`;
-    song.currentTime = 0;
-    song.play();
-    yesButton.style.transform = 'scale(1)';
-    if(page.no){
-      noButton.style.display = 'inline-block';
-      noButton.style.position = 'relative';
-      noButton.style.left = '0px';
-    } else {
-      noButton.style.display = 'none';
-    }
+function loadPage(index){
+  const page = pages[index];
+  message.innerText = page.question;
+  document.body.style.backgroundImage = `url('${page.background}')`;
+  yesButton.style.transform = 'scale(1)';
+
+  if(page.no){
+    noButton.style.display = 'inline-block';
+    noButton.style.position = 'relative';
+    noButton.style.left = '0px';
+  } else {
+    noButton.style.display = 'none';
   }
 
-  function createFloating(){
-    const page = pages[currentPage];
-    const floating = document.createElement('div');
-    floating.className = 'floating';
-    floating.innerText = page.animation[Math.floor(Math.random()*page.animation.length)];
-    floating.style.left = Math.random()*window.innerWidth + 'px';
-    floating.style.fontSize = (12 + Math.random()*24) + 'px';
-    document.body.appendChild(floating);
-    setTimeout(()=>floating.remove(),2000);
+  // Önceki input ve submit temizle
+  const oldInput = document.getElementById('userInput');
+  const oldSubmit = document.getElementById('submitBtn');
+  if(oldInput) oldInput.remove();
+  if(oldSubmit) oldSubmit.remove();
+
+  // Input varsa ekle
+  if(page.input){
+    const input = document.createElement('textarea');
+    input.id = 'userInput';
+    input.placeholder = 'Buraya yazınızı yazabilirsiniz...';
+    input.rows = 5;
+    container.appendChild(input);
+
+    const submit = document.createElement('button');
+    submit.id = 'submitBtn';
+    submit.className = 'button';
+    submit.style.backgroundColor = '#001f7a';
+    submit.style.color = 'white';
+    submit.innerText = 'WhatsApp ile Gönder';
+    submit.style.display = 'block';
+    submit.style.margin = '20px auto 0 auto';
+    submit.addEventListener('click', ()=>{
+      const messageText = encodeURIComponent(input.value);
+      const phone = "5538389999"; // mesaj gönderilecek numara
+      window.open(`https://wa.me/${phone}?text=${messageText}`, '_blank');
+    });
+    container.appendChild(submit);
+  }
+}
+
+function createFloating(){
+  const page = pages[currentPage];
+  if(page.animation.length === 0) return;
+  const floating = document.createElement('div');
+  floating.className = 'floating';
+  floating.innerText = page.animation[Math.floor(Math.random()*page.animation.length)];
+  floating.style.left = Math.random()*window.innerWidth + 'px';
+  floating.style.fontSize = (12 + Math.random()*24) + 'px';
+  document.body.appendChild(floating);
+  setTimeout(()=>floating.remove(),2000);
+}
+
+yesButton.addEventListener('click', ()=>{
+  if(!musicStarted){
+    song.play().catch(()=>{});
+    musicStarted = true;
   }
 
-  yesButton.addEventListener('click', ()=>{
-    message.style.animation='shake 0.5s';
-    message.addEventListener('animationend',()=>{ message.style.animation=''; });
-    for(let i=0;i<5;i++) createFloating();
-    currentPage++;
-    if(currentPage>=pages.length) currentPage = pages.length-1;
-    setTimeout(()=>loadPage(currentPage),500);
-  });
+  message.style.animation='shake 0.5s';
+  message.addEventListener('animationend',()=>{ message.style.animation=''; });
+  for(let i=0;i<5;i++) createFloating();
 
-  function moveNoButton(){
-    currentNoPos = (currentNoPos + 1) % noPositions.length;
-    noButton.style.left = noPositions[currentNoPos];
-  }
+  currentPage++;
+  if(currentPage>=pages.length) currentPage = pages.length-1;
+  setTimeout(()=>loadPage(currentPage),500);
+});
 
-  noButton.addEventListener('mouseover', moveNoButton);
-  noButton.addEventListener('touchstart', e=>{ e.preventDefault(); moveNoButton(); });
+function moveNoButton(){
+  currentNoPos = (currentNoPos + 1) % noPositions.length;
+  noButton.style.left = noPositions[currentNoPos];
+}
 
-  loadPage(currentPage);
+noButton.addEventListener('mouseover', moveNoButton);
+noButton.addEventListener('touchstart', e=>{ e.preventDefault(); moveNoButton(); });
+
+window.addEventListener('load', ()=>{
+  song.play().catch(()=>{});
+  musicStarted = true;
+});
+
+loadPage(currentPage);
 </script>
 </body>
 </html>
