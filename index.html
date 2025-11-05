@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Özür Oyunu</title>
+<title>Yağmura hediyem</title>
 <style>
   html, body {
     margin: 0;
@@ -113,7 +113,7 @@ const pages = [
   { question: "Sinirin geçtiyse özrümü kabul ediyor musun seni bekliyorum", animation: ['🌸'], background: '2. sayfa.jpg', no: true },
   { question: "seni özledim fındık", animation: ['❤️','🌸','🧿'], background: 'orta.png', no: true },
   { question: "553 838 9999\nMesajın bekleniyor", animation: ['❤️','🌸','🧿','📱'], background: 'final.png', no: false },
-  { question: "Buraya kadar geldiysen oyunu bitirdin ve karşılığında güzel bir mesaj atarak bunu bitirmelisin artık konuşabilmeliyiz", animation: [], background: 'arka_yaz.png', no: false, input: true } // 5. sayfa
+  { question: "Buraya kadar geldiysen oyunu bitirdin ve karşılığında güzel bir mesaj atarak bunu bitirmelisin artık konuşabilmeliyiz", animation: [], background: 'arka_yaz.png', no: false, input: true }
 ];
 
 let currentPage = 0;
@@ -139,13 +139,11 @@ function loadPage(index){
     noButton.style.display = 'none';
   }
 
-  // Önceki input ve submit temizle
   const oldInput = document.getElementById('userInput');
   const oldSubmit = document.getElementById('submitBtn');
   if(oldInput) oldInput.remove();
   if(oldSubmit) oldSubmit.remove();
 
-  // Input varsa ekle
   if(page.input){
     const input = document.createElement('textarea');
     input.id = 'userInput';
@@ -163,7 +161,7 @@ function loadPage(index){
     submit.style.margin = '20px auto 0 auto';
     submit.addEventListener('click', ()=>{
       const messageText = encodeURIComponent(input.value);
-      const phone = "5538389999"; // mesaj gönderilecek numara
+      const phone = "5538389999";
       window.open(`https://wa.me/${phone}?text=${messageText}`, '_blank');
     });
     container.appendChild(submit);
@@ -183,9 +181,11 @@ function createFloating(){
 }
 
 yesButton.addEventListener('click', ()=>{
+  // Kullanıcı tıklamasıyla çal
   if(!musicStarted){
-    song.play().catch(()=>{});
-    musicStarted = true;
+    song.play()
+        .then(()=>{ musicStarted = true; })
+        .catch(err=>console.log("Çalma hatası:", err));
   }
 
   message.style.animation='shake 0.5s';
@@ -206,12 +206,8 @@ noButton.addEventListener('mouseover', moveNoButton);
 noButton.addEventListener('touchstart', e=>{ e.preventDefault(); moveNoButton(); });
 
 window.addEventListener('load', ()=>{
-  song.play().catch(()=>{});
-  musicStarted = true;
+  loadPage(currentPage);
 });
-
-loadPage(currentPage);
 </script>
 </body>
 </html>
-
