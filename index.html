@@ -2,53 +2,45 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonsuza Kadar Seninle</title>
+    <title>Sonsuz Yürüyüş</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #ff9a9e; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        canvas { display: block; }
-        #text { position: absolute; top: 10%; color: white; font-family: 'Verdana', sans-serif; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); pointer-events: none; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #87CEEB, #ffffff);
+            height: 100vh;
+        }
+
+        /* Deniz ve Yol katmanı */
+        .scenery {
+            position: absolute;
+            bottom: 0;
+            width: 200%;
+            height: 200px;
+            background: linear-gradient(to right, #1E90FF, #00BFFF, #1E90FF);
+            animation: moveBackground 10s linear infinite;
+        }
+
+        /* Yürüyen karakterler */
+        .people {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+        }
+
+        /* Sonsuz döngü animasyonu */
+        @keyframes moveBackground {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
     </style>
 </head>
 <body>
 
-    <div id="text">
-        <h1>Sonsuz Yürüyüşümüz</h1>
-        <p>Yolumuz hiç bitmesin...</p>
-    </div>
-    <canvas id="game"></canvas>
+    <div class="people">👫</div>
+    <div class="scenery"></div>
 
-    <script>
-        const canvas = document.getElementById('game');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let groundOffset = 0;
-
-        function draw() {
-            // Gökyüzü (Gün batımı rengi)
-            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            grad.addColorStop(0, '#ff9a9e');
-            grad.addColorStop(1, '#fad0c4');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Kumsal (İlerleyen yol efekti)
-            ctx.fillStyle = '#e6c2a8';
-            ctx.fillRect(0, canvas.height * 0.7, canvas.width, canvas.height * 0.3);
-
-            // Karakterler (İki kişi - Basit silüetler)
-            ctx.fillStyle = '#5d4037';
-            let yPos = canvas.height * 0.75 + Math.sin(Date.now() / 200) * 10;
-            // Kişi 1
-            ctx.beginPath(); ctx.arc(canvas.width / 2 - 30, yPos, 15, 0, Math.PI * 2); ctx.fill();
-            // Kişi 2
-            ctx.beginPath(); ctx.arc(canvas.width / 2 + 30, yPos, 15, 0, Math.PI * 2); ctx.fill();
-
-            requestAnimationFrame(draw);
-        }
-        draw();
-    </script>
 </body>
 </html>
