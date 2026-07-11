@@ -3,86 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonsuz Yürüyüş</title>
+    <title>Sonsuz Yürüyüş Oyunu</title>
     <style>
-        /* Sayfa Genel Ayarları */
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: linear-gradient(to bottom, #87CEEB, #ffffff);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            position: relative;
+        body { 
+            margin: 0; padding: 0; overflow: hidden; 
+            background: linear-gradient(to bottom, #87CEEB, #ffffff); 
+            height: 100vh; position: relative; 
         }
 
-        /* 1. Arka Plan Katmanı (Bulutlar) */
-        .background-scenery {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 10% 20%, white 20px, transparent 21px),
-                radial-gradient(circle at 30% 10%, white 30px, transparent 31px),
-                radial-gradient(circle at 50% 25%, white 25px, transparent 26px),
-                radial-gradient(circle at 80% 15%, white 35px, transparent 36px);
-            background-size: 1000px 100%;
-            animation: moveBackground 40s linear infinite;
-            z-index: 0;
+        /* 1. Arka Plan (Bulutlar) */
+        .background-scenery { 
+            position: absolute; top: 0; left: 0; width: 200%; height: 100%; 
+            background-image: radial-gradient(circle at 10% 20%, white 20px, transparent 21px), 
+                              radial-gradient(circle at 50% 25%, white 25px, transparent 26px),
+                              radial-gradient(circle at 80% 15%, white 35px, transparent 36px);
+            background-size: 1000px 100%; 
+            animation: moveBackground 40s linear infinite; z-index: 0; 
         }
 
-        /* 2. Karakterler (Merkezde Sabit, Yürüme Efektli) */
-        .characters {
-            position: absolute;
-            bottom: 40px;
-            font-size: 60px;
-            z-index: 2;
-            animation: walkCycle 0.5s infinite alternate;
+        /* 2. Zemin (Kumsal) */
+        .ground { 
+            position: absolute; bottom: 0; left: 0; width: 200%; height: 100px; 
+            background: repeating-linear-gradient(90deg, #F4A460, #F4A460 100px, #E3924D 100px, #E3924D 200px);
+            animation: moveGround 3s linear infinite; z-index: 1; 
         }
 
-        /* 3. Zemin Katmanı (Hareketli Kumsal) */
-        .ground {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200%;
-            height: 100px;
-            background: repeating-linear-gradient(
-                90deg, 
-                #F4A460, 
-                #F4A460 100px, 
-                #E3924D 100px, 
-                #E3924D 200px
-            );
-            animation: moveGround 3s linear infinite;
-            z-index: 1;
+        /* 3. Karakter Konteynırı */
+        .characters { 
+            position: absolute; bottom: 90px; left: 50px; z-index: 2; transition: bottom 0.3s; 
+        }
+        
+        /* 4. Engel (Deniz Yıldızı) */
+        .obstacle { 
+            position: absolute; bottom: 90px; right: -50px; font-size: 40px; z-index: 2; 
+            animation: moveObstacle 3s linear infinite; 
         }
 
-        /* Animasyon Tanımlamaları */
-        @keyframes moveBackground {
-            from { transform: translateX(0); }
-            to { transform: translateX(-500px); }
-        }
+        /* Zıplama Mekaniği */
+        #jump-trigger { display: none; }
+        #jump-trigger:checked ~ .characters { animation: jumpCycle 0.6s linear; }
 
-        @keyframes moveGround {
-            from { transform: translateX(0); }
-            to { transform: translateX(-200px); }
-        }
-
-        @keyframes walkCycle {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
-        }
+        /* Animasyonlar */
+        @keyframes moveBackground { from { transform: translateX(0); } to { transform: translateX(-500px); } }
+        @keyframes moveGround { from { transform: translateX(0); } to { transform: translateX(-200px); } }
+        @keyframes moveObstacle { from { right: -50px; } to { right: 110%; } }
+        @keyframes jumpCycle { 0% { bottom: 90px; } 50% { bottom: 220px; } 100% { bottom: 90px; } }
+        
+        label { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; z-index: 3; }
     </style>
 </head>
 <body>
 
+    <input type="checkbox" id="jump-trigger" onclick="setTimeout(() => {this.checked = false}, 600)">
+    <label for="jump-trigger"></label>
+
     <div class="background-scenery"></div>
-    <div class="characters">👫</div>
+
+    <div class="characters">
+        <svg width="120" height="100" viewBox="0 0 120 100">
+            <rect x="10" y="40" width="30" height="35" fill="white" stroke="black" stroke-width="2"/>
+            <circle cx="25" cy="30" r="10" fill="peachpuff" stroke="black" stroke-width="2"/>
+            
+            <rect x="60" y="40" width="30" height="20" fill="black" stroke="black" stroke-width="2"/>
+            <circle cx="75" cy="30" r="10" fill="peachpuff" stroke="black" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <div class="obstacle">⭐</div>
     <div class="ground"></div>
 
 </body>
