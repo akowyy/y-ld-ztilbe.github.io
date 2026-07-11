@@ -1,218 +1,54 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>irem</title>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-  }
-
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative;
-  }
-
-  #container {
-    text-align: center;
-    background: rgba(255,255,255,0.7);
-    padding: 25px;
-    border-radius: 20px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    z-index: 2;
-    position: relative;
-    width: 90%;
-    max-width: 500px;
-  }
-
-  h1 {
-    font-size: 28px;
-    margin: 0 0 20px 0;
-    white-space: pre-line;
-    transition: transform 0.3s;
-  }
-
-  .button {
-    margin: 10px;
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
-    position: relative;
-  }
-
-  #yesButton { background-color: #001f7a; color: white; }
-  #yesButton:hover { transform: scale(1.1); }
-  #noButton { background-color: #ffd700; color: black; }
-
-  textarea {
-    width: 90%;
-    padding: 10px;
-    font-size: 16px;
-    margin-top: 20px;
-    border-radius: 12px;
-    border: 2px solid #001f7a;
-    resize: none;
-  }
-
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-  }
-
-  .floating {
-    position: absolute;
-    font-size: 24px;
-    animation: float 2s linear forwards;
-    z-index: 1;
-  }
-
-  @keyframes float {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-300px) scale(1.5); opacity: 0; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonsuza Kadar Seninle</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #ff9a9e; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        canvas { display: block; }
+        #text { position: absolute; top: 10%; color: white; font-family: 'Verdana', sans-serif; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); pointer-events: none; }
+    </style>
 </head>
 <body>
-<div id="container">
-  <h1 id="message"></h1>
-  <button id="yesButton" class="button">Evet</button>
-  <button id="noButton" class="button">Hayır</button>
-  <audio id="song" loop>
-    <source src="sarki.mp3" type="audio/mpeg">
-    Tarayıcınız audio etiketini desteklemiyor.
-  </audio>
-</div>
 
-<script>
-const container = document.getElementById('container');
-const yesButton = document.getElementById('yesButton');
-const noButton = document.getElementById('noButton');
-const message = document.getElementById('message');
-const song = document.getElementById('song');
+    <div id="text">
+        <h1>Sonsuz Yürüyüşümüz</h1>
+        <p>Yolumuz hiç bitmesin...</p>
+    </div>
+    <canvas id="game"></canvas>
 
-const pages = [
-  { question: "Selam", animation: ['❤️'], background: 'giriss.jpg', no: true },
-  { question: "Barisma oynuna hosgeldın", animation: ['❤️'], background: 'kedicik.jpg', no: true },
-  { question: "Barismayi onaylıyor musun", animation: ['🌸'], background: 'ayıı.jpg', no: true },
-  { question: "sON KARARın mı", animation: ['🌸'], background: '0irem.jpg', no: true },
-    { question: "Anlasma onaylandı seni seviyorum geri donus yok", animation: ['🌸'], background: '2irem.jpg', no: true },
- 
-];
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-let currentPage = 0;
-const noPositions = ['0px','80px','-80px'];
-let currentNoPos = 0;
-let musicStarted = false;
+        let groundOffset = 0;
 
-function setBodyHeight() { document.body.style.height = window.innerHeight + "px"; }
-window.addEventListener('resize', setBodyHeight);
-setBodyHeight();
+        function draw() {
+            // Gökyüzü (Gün batımı rengi)
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#ff9a9e');
+            grad.addColorStop(1, '#fad0c4');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-function loadPage(index){
-  const page = pages[index];
-  message.innerText = page.question;
-  document.body.style.backgroundImage = `url('${page.background}')`;
-  yesButton.style.transform = 'scale(1)';
+            // Kumsal (İlerleyen yol efekti)
+            ctx.fillStyle = '#e6c2a8';
+            ctx.fillRect(0, canvas.height * 0.7, canvas.width, canvas.height * 0.3);
 
-  if(page.no){
-    noButton.style.display = 'inline-block';
-    noButton.style.position = 'relative';
-    noButton.style.left = '0px';
-  } else {
-    noButton.style.display = 'none';
-  }
+            // Karakterler (İki kişi - Basit silüetler)
+            ctx.fillStyle = '#5d4037';
+            let yPos = canvas.height * 0.75 + Math.sin(Date.now() / 200) * 10;
+            // Kişi 1
+            ctx.beginPath(); ctx.arc(canvas.width / 2 - 30, yPos, 15, 0, Math.PI * 2); ctx.fill();
+            // Kişi 2
+            ctx.beginPath(); ctx.arc(canvas.width / 2 + 30, yPos, 15, 0, Math.PI * 2); ctx.fill();
 
-  const oldInput = document.getElementById('userInput');
-  const oldSubmit = document.getElementById('submitBtn');
-  if(oldInput) oldInput.remove();
-  if(oldSubmit) oldSubmit.remove();
-
-  if(page.input){
-    const input = document.createElement('textarea');
-    input.id = 'userInput';
-    input.placeholder = 'Buraya yazınızı yazabilirsiniz...';
-    input.rows = 5;
-    container.appendChild(input);
-
-    const submit = document.createElement('button');
-    submit.id = 'submitBtn';
-    submit.className = 'button';
-    submit.style.backgroundColor = '#001f7a';
-    submit.style.color = 'white';
-    submit.innerText = 'WhatsApp ile Gönder';
-    submit.style.display = 'block';
-    submit.style.margin = '20px auto 0 auto';
-    submit.addEventListener('click', ()=>{
-      const messageText = encodeURIComponent(input.value);
-      const phone = "5538389999";
-      window.open(`https://wa.me/${phone}?text=${messageText}`, '_blank');
-    });
-    container.appendChild(submit);
-  }
-}
-
-function createFloating(){
-  const page = pages[currentPage];
-  if(page.animation.length === 0) return;
-  const floating = document.createElement('div');
-  floating.className = 'floating';
-  floating.innerText = page.animation[Math.floor(Math.random()*page.animation.length)];
-  floating.style.left = Math.random()*window.innerWidth + 'px';
-  floating.style.fontSize = (12 + Math.random()*24) + 'px';
-  document.body.appendChild(floating);
-  setTimeout(()=>floating.remove(),2000);
-}
-
-yesButton.addEventListener('click', ()=>{
-  // Kullanıcı tıklamasıyla çal
-  if(!musicStarted){
-    song.play()
-        .then(()=>{ musicStarted = true; })
-        .catch(err=>console.log("Çalma hatası:", err));
-  }
-
-  message.style.animation='shake 0.5s';
-  message.addEventListener('animationend',()=>{ message.style.animation=''; });
-  for(let i=0;i<5;i++) createFloating();
-
-  currentPage++;
-  if(currentPage>=pages.length) currentPage = pages.length-1;
-  setTimeout(()=>loadPage(currentPage),500);
-});
-
-function moveNoButton(){
-  currentNoPos = (currentNoPos + 1) % noPositions.length;
-  noButton.style.left = noPositions[currentNoPos];
-}
-
-noButton.addEventListener('mouseover', moveNoButton);
-noButton.addEventListener('touchstart', e=>{ e.preventDefault(); moveNoButton(); });
-
-window.addEventListener('load', ()=>{
-  loadPage(currentPage);
-});
-</script>
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
 </body>
 </html>
-
-
-
-
