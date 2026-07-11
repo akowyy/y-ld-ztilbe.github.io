@@ -101,36 +101,43 @@
     position:absolute; bottom:106px; left:60px; width:170px; height:100px; z-index:5;
   }
   #char-wrap svg{ width:100%; height:100%; overflow:visible; }
-  .leg{ transform-origin: center top; }
+  .leg{ transform-box: fill-box; transform-origin: 50% 0%; }
   #char-wrap.running .leg-l{ animation:legSwing .28s linear infinite; }
   #char-wrap.running .leg-r{ animation:legSwing .28s linear infinite reverse; }
   @keyframes legSwing{ 0%{transform:rotate(18deg);} 50%{transform:rotate(-18deg);} 100%{transform:rotate(18deg);} }
   /* ===== YENİ OTURMA POZU ===== */
 
 #char-wrap.sitting{
-    transform:translateY(22px) translateX(-8px);
-    transition:all .35s ease;
+    transform:translateY(-6px);
+    transition:transform .35s ease;
 }
 
 #char-wrap.sitting .leg{
     animation:none;
-    transform:rotate(92deg);
-    transform-origin:center top;
+    transform:scaleY(.5) rotate(4deg);
+}
+
+#char-wrap.sitting .male-figure{
+    transform:translate(6px,0);
+    transition:transform .35s ease;
+}
+
+#char-wrap.sitting .female-figure{
+    transform:translate(-6px,0);
+    transition:transform .35s ease;
 }
 
 #char-wrap.sitting .male-head{
-    transform:translateX(8px) translateY(8px) rotate(10deg);
-    transition:.35s;
+    transform:rotate(6deg);
 }
 
 #char-wrap.sitting .female-head{
-    transform:translateX(-18px) translateY(6px) rotate(-18deg);
-    transition:.35s;
+    transform:translate(-22px,10px) rotate(-18deg);
 }
 
 #char-wrap.sitting #cat-wrap{
-    transform:translate(-18px,-24px) scale(.9);
-    transition:.35s;
+    transform:translate(-42px,14px) scale(.62);
+    transition:transform .35s ease;
 }
 
   .bench{ position:absolute; bottom:106px; width:70px; height:50px; z-index:3; }
@@ -179,7 +186,7 @@
     box-shadow:0 3px 8px rgba(0,0,0,.15);
   }
 
-  .male-head, .female-head{ transition: transform .35s ease; transform-origin: center; }
+  .male-head, .female-head{ transition: transform .35s ease; transform-box: fill-box; transform-origin: 50% 50%; }
   #char-wrap.kissing .male-head{ transform: translateX(13px) translateY(2px); }
   #char-wrap.kissing .female-head{ transform: translateX(-13px) translateY(2px); }
   #char-wrap.boy-bow .male-head{ transform: translateY(10px) rotate(14deg); }
@@ -258,21 +265,25 @@
   <div id="char-wrap" class="running">
     <svg viewBox="0 0 175 100">
       <!-- Erkek karakter: beyaz tişört -->
-      <g class="leg leg-l"><rect x="20" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <g class="leg leg-r"><rect x="35" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <rect x="15" y="35" width="35" height="38" rx="8" fill="#ffffff" stroke="#1F3B4D" stroke-width="2"/>
-      <g class="male-head">
-        <circle cx="32" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
-        <path d="M20,24 A12,12 0 0,1 44,24 L44,17 L41,20 L38,15 L35,19 L32,14 L29,19 L26,15 L23,20 L20,17 Z" fill="#161616"/>
+      <g class="male-figure">
+        <g class="leg leg-l"><rect x="20" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
+        <g class="leg leg-r"><rect x="35" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
+        <rect x="15" y="35" width="35" height="38" rx="8" fill="#ffffff" stroke="#1F3B4D" stroke-width="2"/>
+        <g class="male-head">
+          <circle cx="32" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
+          <path d="M20,24 A12,12 0 0,1 44,24 L44,17 L41,20 L38,15 L35,19 L32,14 L29,19 L26,15 L23,20 L20,17 Z" fill="#161616"/>
+        </g>
       </g>
 
       <!-- Kız karakter: siyah tişört -->
-      <g class="leg leg-r"><rect x="70" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <g class="leg leg-l"><rect x="85" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <rect x="65" y="35" width="35" height="24" rx="6" fill="#1F3B4D"/>
-      <g class="female-head">
-        <circle cx="82" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
-        <path d="M70,25 Q69,10 82,9 Q95,10 94,25 Q97,42 90,54 Q87,43 87,29 Q84,33 82,31 Q80,33 77,29 Q77,43 74,54 Q67,42 70,25 Z" fill="#8B5E3C" stroke="#6E4A2E" stroke-width="1"/>
+      <g class="female-figure">
+        <g class="leg leg-r"><rect x="70" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
+        <g class="leg leg-l"><rect x="85" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
+        <rect x="65" y="35" width="35" height="24" rx="6" fill="#1F3B4D"/>
+        <g class="female-head">
+          <circle cx="82" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
+          <path d="M70,25 Q69,10 82,9 Q95,10 94,25 Q97,42 90,54 Q87,43 87,29 Q84,33 82,31 Q80,33 77,29 Q77,43 74,54 Q67,42 70,25 Z" fill="#8B5E3C" stroke="#6E4A2E" stroke-width="1"/>
+        </g>
       </g>
 
       <!-- Kedi: onlarla birlikte yürüyor, kafası yola (sağa) dönük -->
@@ -339,6 +350,7 @@
   const GROUND_H = 106;
   const CHAR_LEFT = 60;
   const CHAR_W = 120, CHAR_H = 100;
+  const SIT_BENCH_X = 80; // çift figürünün görsel merkezine göre bank hizası
 
   let groundX = 0;
   const baseSpeed = 2.3;
@@ -619,6 +631,8 @@
 
       if (!b.triggered && !sitting && b.x < charRight && b.x + b.w > charLeft){
         b.triggered = true;
+        b.x = SIT_BENCH_X;
+        b.el.style.right = (window.innerWidth - b.x - b.w) + 'px';
         startSit();
       }
 
