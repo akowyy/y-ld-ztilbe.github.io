@@ -149,8 +149,19 @@
     box-shadow:0 3px 8px rgba(0,0,0,.15);
   }
 
+  .male-head, .female-head{ transition: transform .35s ease; transform-origin: center; }
+  #char-wrap.kissing .male-head{ transform: translateX(13px) translateY(2px); }
+  #char-wrap.kissing .female-head{ transform: translateX(-13px) translateY(2px); }
+
   #playlist-btn{
     position:absolute; top:16px; left:70px; z-index:10;
+    width:42px; height:42px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+
+  #kiss-btn{
+    position:absolute; top:16px; left:124px; z-index:10;
     width:42px; height:42px; border-radius:50%; border:none;
     background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
     box-shadow:0 3px 8px rgba(0,0,0,.15);
@@ -194,15 +205,19 @@
       <g class="leg leg-l"><rect x="20" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
       <g class="leg leg-r"><rect x="35" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
       <rect x="15" y="35" width="35" height="38" rx="8" fill="#ffffff" stroke="#1F3B4D" stroke-width="2"/>
-      <circle cx="32" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
-      <path d="M20,24 A12,12 0 0,1 44,24 L44,17 L41,20 L38,15 L35,19 L32,14 L29,19 L26,15 L23,20 L20,17 Z" fill="#161616"/>
+      <g class="male-head">
+        <circle cx="32" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
+        <path d="M20,24 A12,12 0 0,1 44,24 L44,17 L41,20 L38,15 L35,19 L32,14 L29,19 L26,15 L23,20 L20,17 Z" fill="#161616"/>
+      </g>
 
       <!-- Kız karakter: siyah tişört -->
       <g class="leg leg-r"><rect x="70" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
       <g class="leg leg-l"><rect x="85" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
       <rect x="65" y="35" width="35" height="24" rx="6" fill="#1F3B4D"/>
-      <circle cx="82" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
-      <path d="M70,25 Q69,10 82,9 Q95,10 94,25 Q97,42 90,54 Q87,43 87,29 Q84,33 82,31 Q80,33 77,29 Q77,43 74,54 Q67,42 70,25 Z" fill="#8B5E3C" stroke="#6E4A2E" stroke-width="1"/>
+      <g class="female-head">
+        <circle cx="82" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
+        <path d="M70,25 Q69,10 82,9 Q95,10 94,25 Q97,42 90,54 Q87,43 87,29 Q84,33 82,31 Q80,33 77,29 Q77,43 74,54 Q67,42 70,25 Z" fill="#8B5E3C" stroke="#6E4A2E" stroke-width="1"/>
+      </g>
 
       <!-- Kedi: onlarla birlikte yürüyor, kafası yola (sağa) dönük -->
       <g id="cat-wrap">
@@ -230,6 +245,7 @@
   <div id="hint">15.05.2026</div>
   <button id="music-btn" aria-label="Müziği aç/kapat">🔊</button>
   <button id="playlist-btn" aria-label="Spotify listesi">🎧</button>
+  <button id="kiss-btn" aria-label="Öptür">💋</button>
   <div id="playlist-panel">
     <iframe src="https://open.spotify.com/embed/playlist/4N3dAs4sjzW4GGI2s4DgiD?utm_source=generator"
       width="100%" height="152" frameborder="0"
@@ -255,6 +271,7 @@
   const catWrap = document.getElementById('cat-wrap');
   const playlistBtn = document.getElementById('playlist-btn');
   const playlistPanel = document.getElementById('playlist-panel');
+  const kissBtn = document.getElementById('kiss-btn');
 
   const HEART_EMOJIS = ['💗','💖','💕','❤️','💞'];
   const GROUND_H = 106;
@@ -272,6 +289,7 @@
   let vy = 0;
   let charY = 0;
   let jumping = false;
+  let kissing = false;
   const GRAVITY = 0.55;
   const JUMP_V = 11;
   let lastTime = null;
@@ -304,6 +322,22 @@
   playlistBtn.addEventListener('click', (e) => { e.stopPropagation(); playlistPanel.classList.toggle('show'); });
   playlistBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
   playlistPanel.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  function doKiss(){
+    if (kissing) return;
+    kissing = true;
+    charWrap.classList.remove('running');
+    charWrap.classList.add('kissing');
+    spawnPop();
+    setTimeout(spawnPop, 150);
+    setTimeout(spawnPop, 320);
+    setTimeout(() => {
+      charWrap.classList.remove('kissing');
+      kissing = false;
+    }, 900);
+  }
+  kissBtn.addEventListener('click', (e) => { e.stopPropagation(); doKiss(); });
+  kissBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   // ---- Sürekli akşam / sabah döngüsü ----
   let isDusk = false;
@@ -373,7 +407,7 @@
       charWrap.style.bottom = (GROUND_H + charY) + 'px';
       charWrap.classList.remove('running');
     } else {
-      charWrap.classList.add('running');
+      if (!kissing) charWrap.classList.add('running');
     }
 
     lastSpawn += dt;
