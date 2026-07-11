@@ -1,150 +1,3 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kumsal Koşusu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --sky-day-top:#8ED1E0; --sky-day-bot:#EAF6FB;
-    --sky-dusk-top:#3B5B82; --sky-dusk-bot:#F2A65A;
-    --sand-1:#F4C77B; --sand-2:#E8A94F;
-    --ink:#1F3B4D; --sun:#FFC94A; --sun-glow:#FF8C42;
-    --foam:#FFFFFF;
-  }
-  * { box-sizing:border-box; }
-  html,body{ margin:0; padding:0; height:100%; overflow:hidden; font-family:'Nunito',sans-serif; }
-  #stage{
-    position:relative; width:100vw; height:100vh;
-    background:linear-gradient(to bottom, var(--sky-day-top), var(--sky-day-bot));
-    transition:background 1.2s ease; -webkit-tap-highlight-color:transparent;
-    cursor:pointer; user-select:none;
-  }
-  #stage.dusk{ background:linear-gradient(to bottom, var(--sky-dusk-top), var(--sky-dusk-bot)); }
-
-  #sun{
-    position:absolute; width:70px; height:70px; border-radius:50%;
-    background:radial-gradient(circle at 35% 35%, var(--sun), var(--sun-glow));
-    box-shadow:0 0 40px 10px rgba(255,201,74,.5);
-    top:12%; left:8%; transition:top 1.2s ease, left 1.2s ease, opacity 1.2s ease;
-  }
-  #stage.dusk #sun{ top:60%; left:78%; opacity:.85; }
-
-  .cloud{
-    position:absolute; background:#fff; border-radius:50px;
-    opacity:.9; filter:drop-shadow(0 4px 0 rgba(0,0,0,.03));
-  }
-
-  #ground{
-    position:absolute; bottom:0; left:0; width:220%; height:110px;
-    background:repeating-linear-gradient(90deg, var(--sand-1), var(--sand-1) 100px, var(--sand-2) 100px, var(--sand-2) 200px);
-    border-top:4px solid #D98A3D;
-  }
-
-  #char-wrap{
-    position:absolute; bottom:106px; left:60px; width:120px; height:100px; z-index:5;
-  }
-  #char-wrap svg{ width:100%; height:100%; overflow:visible; }
-  .leg{ transform-origin: center top; }
-  #char-wrap.running .leg-l{ animation:legSwing .28s linear infinite; }
-  #char-wrap.running .leg-r{ animation:legSwing .28s linear infinite reverse; }
-  @keyframes legSwing{ 0%{transform:rotate(18deg);} 50%{transform:rotate(-18deg);} 100%{transform:rotate(18deg);} }
-
-  .obstacle{ position:absolute; bottom:106px; font-size:42px; z-index:4; line-height:1; filter:drop-shadow(0 3px 2px rgba(0,0,0,.25)); }
-
-  .heart-fx{
-    position:absolute; z-index:6; font-size:24px; pointer-events:none;
-    animation:heartFloat .9s ease-out forwards;
-  }
-  @keyframes heartFloat{
-    0%{ transform:translateY(0) scale(.5) rotate(-8deg); opacity:0; }
-    18%{ opacity:1; transform:translateY(-8px) scale(1) rotate(4deg); }
-    100%{ transform:translateY(-75px) scale(1.3) rotate(-6deg); opacity:0; }
-  }
-
-  #hud{
-    position:absolute; top:16px; right:20px; z-index:10;
-    font-family:'Baloo 2', sans-serif; color:var(--ink); text-align:right;
-    text-shadow:0 2px 0 rgba(255,255,255,.5);
-  }
-  #hud .score{ font-size:28px; font-weight:800; }
-  #hud .best{ font-size:14px; font-weight:600; opacity:.75; }
-
-  #hint{
-    position:absolute; top:16px; left:20px; z-index:10;
-    font-family:'Nunito',sans-serif; font-weight:700; font-size:14px;
-    color:var(--ink); background:rgba(255,255,255,.55); padding:6px 12px;
-    border-radius:20px;
-  }
-
-  #levelup{
-    position:absolute; top:38%; left:50%; transform:translate(-50%,-50%) scale(.6);
-    font-family:'Baloo 2',sans-serif; font-weight:800; font-size:42px; color:var(--foam);
-    text-shadow:0 3px 0 var(--sun-glow), 0 6px 14px rgba(0,0,0,.25);
-    opacity:0; pointer-events:none; z-index:9; transition:opacity .25s, transform .25s;
-  }
-  #levelup.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
-
-  #overlay{
-    position:absolute; inset:0; background:rgba(31,59,77,.55);
-    display:none; align-items:center; justify-content:center; z-index:20;
-    font-family:'Nunito',sans-serif;
-  }
-  #overlay.show{ display:flex; }
-  #panel{
-    background:var(--foam); border-radius:24px; padding:32px 40px; text-align:center;
-    box-shadow:0 20px 40px rgba(0,0,0,.25); max-width:320px;
-  }
-  #panel h1{ font-family:'Baloo 2',sans-serif; margin:0 0 6px; color:var(--ink); font-size:26px; }
-  #panel p{ margin:4px 0 20px; color:var(--ink); opacity:.75; font-weight:600; }
-  #panel .final-score{ font-family:'Baloo 2',sans-serif; font-size:46px; color:var(--sun-glow); font-weight:800; margin-bottom:4px; }
-  #restart-btn{
-    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:18px; color:#fff;
-    background:var(--sun-glow); border:none; border-radius:14px; padding:12px 28px;
-    cursor:pointer; box-shadow:0 6px 0 #C96A2A; transition:transform .08s;
-  }
-  #restart-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #C96A2A; }
-</style>
-</head>
-<body>
-<div id="stage">
-  <div id="sun"></div>
-  <div id="ground"></div>
-  <div id="char-wrap" class="running">
-    <svg viewBox="0 0 120 100">
-      <!-- Erkek karakter: beyaz tişört -->
-      <g class="leg leg-l"><rect x="20" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <g class="leg leg-r"><rect x="35" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <rect x="15" y="35" width="35" height="38" rx="8" fill="#ffffff" stroke="#1F3B4D" stroke-width="2"/>
-      <circle cx="32" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
-      <path d="M20,24 A12,12 0 0,1 44,24 L44,17 L41,20 L38,15 L35,19 L32,14 L29,19 L26,15 L23,20 L20,17 Z" fill="#161616"/>
-
-      <!-- Kız karakter: siyah tişört -->
-      <g class="leg leg-r"><rect x="70" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <g class="leg leg-l"><rect x="85" y="70" width="10" height="25" rx="4" fill="#1F3B4D"/></g>
-      <rect x="65" y="35" width="35" height="24" rx="6" fill="#1F3B4D"/>
-      <circle cx="82" cy="24" r="12" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="2"/>
-      <path d="M70,25 Q69,10 82,9 Q95,10 94,25 Q97,42 90,54 Q87,43 87,29 Q84,33 82,31 Q80,33 77,29 Q77,43 74,54 Q67,42 70,25 Z" fill="#8B5E3C" stroke="#6E4A2E" stroke-width="1"/>
-    </svg>
-  </div>
-  <div id="hud">
-    <div class="score" id="score">0</div>
-    <div class="best" id="best">En iyi: 0</div>
-  </div>
-  <div id="hint">Zıplamak için dokun / Boşluk / ↑</div>
-  <div id="levelup" id="levelup">Tur 2!</div>
-  <div id="overlay">
-    <div id="panel">
-      <h1>Oyun Bitti 🐚</h1>
-      <div class="final-score" id="final-score">0</div>
-      <p id="final-msg">Bir deniz yıldızına takıldın!</p>
-      <button id="restart-btn">Tekrar Oyna</button>
-    </div>
-  </div>
-</div>
-
 <script>
 (function(){
   const stage = document.getElementById('stage');
@@ -171,7 +24,7 @@
   let level = 1;
   let running = true;
   let lastSpawn = 0;
-  let spawnGap = 900;
+  let spawnGap = 1600; // DAHA SEYREK ENGEL
   let obstacles = [];
   let vy = 0;
   let charY = 0;
@@ -184,7 +37,7 @@
     groundX = 0; speed = baseSpeed; score = 0; level = 1;
     obstacles.forEach(o => o.el.remove());
     obstacles = []; vy = 0; charY = 0; jumping = false;
-    lastSpawn = 0; spawnGap = 900; running = true; lastTime = null;
+    lastSpawn = 0; spawnGap = 1600; running = true; lastTime = null;
     stage.classList.remove('dusk');
     overlay.classList.remove('show');
     scoreEl.textContent = '0';
@@ -227,7 +80,7 @@
     if (newLevel !== level){
       level = newLevel;
       speed = baseSpeed + (level-1)*1.1;
-      spawnGap = Math.max(420, 900 - (level-1)*60);
+      spawnGap = Math.max(800, 1600 - (level-1)*30); // Seviye atlayınca zorlaşma daha yumuşak
       levelupEl.textContent = 'Tur ' + level + '!';
       levelupEl.classList.add('show');
       setTimeout(() => levelupEl.classList.remove('show'), 700);
@@ -251,12 +104,10 @@
     lastTime = t;
     const dtScale = dt / 16.6667;
 
-    // ground scroll
     groundX -= speed * dtScale;
     if (groundX <= -200) groundX += 200;
     ground.style.transform = 'translateX(' + groundX + 'px)';
 
-    // jump physics
     if (jumping){
       charY += vy * dtScale;
       vy -= GRAVITY * dtScale;
@@ -267,14 +118,12 @@
       charWrap.classList.add('running');
     }
 
-    // spawn
     lastSpawn += dt;
     if (lastSpawn > spawnGap){
       lastSpawn = 0;
       spawnObstacle();
     }
 
-    // move obstacles + collision
     const charLeft = CHAR_LEFT + 14, charRight = CHAR_LEFT + CHAR_W - 20;
     const charBottom = GROUND_H + charY, charTop = charBottom + CHAR_H - 30;
 
@@ -313,5 +162,3 @@
   requestAnimationFrame(loop);
 })();
 </script>
-</body>
-</html>
