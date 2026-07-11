@@ -105,10 +105,33 @@
   #char-wrap.running .leg-l{ animation:legSwing .28s linear infinite; }
   #char-wrap.running .leg-r{ animation:legSwing .28s linear infinite reverse; }
   @keyframes legSwing{ 0%{transform:rotate(18deg);} 50%{transform:rotate(-18deg);} 100%{transform:rotate(18deg);} }
-  #char-wrap.sitting{ transform:translateY(12px); transition:transform .3s ease; }
-  #char-wrap.sitting .leg{ animation:none; transform:rotate(68deg); }
-  #char-wrap.sitting .female-head{ transform: translateX(-42px) translateY(14px) rotate(-14deg); }
-  #char-wrap.sitting .male-head{ transform: translateX(3px) translateY(3px) rotate(5deg); }
+  /* ===== YENİ OTURMA POZU ===== */
+
+#char-wrap.sitting{
+    transform:translateY(22px) translateX(-8px);
+    transition:all .35s ease;
+}
+
+#char-wrap.sitting .leg{
+    animation:none;
+    transform:rotate(92deg);
+    transform-origin:center top;
+}
+
+#char-wrap.sitting .male-head{
+    transform:translateX(8px) translateY(8px) rotate(10deg);
+    transition:.35s;
+}
+
+#char-wrap.sitting .female-head{
+    transform:translateX(-18px) translateY(6px) rotate(-18deg);
+    transition:.35s;
+}
+
+#char-wrap.sitting #cat-wrap{
+    transform:translate(-18px,-24px) scale(.9);
+    transition:.35s;
+}
 
   .bench{ position:absolute; bottom:106px; width:70px; height:50px; z-index:3; }
   .bench svg{ width:100%; height:100%; overflow:visible; }
