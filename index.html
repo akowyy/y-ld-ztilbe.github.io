@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonsuz Kumsal Yürüyüşü</title>
+    <title>Sonsuz Yürüyüş</title>
     <style>
-        /* Sayfa yapısı */
+        /* Sayfa Genel Ayarları */
         body {
             margin: 0;
             padding: 0;
@@ -15,15 +15,42 @@
             display: flex;
             justify-content: center;
             align-items: flex-end;
+            position: relative;
         }
 
-        /* Yürünecek zemin (Kumsal ve çizgiler) */
-        .beach {
+        /* 1. Arka Plan Katmanı (Bulutlar) */
+        .background-scenery {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, white 20px, transparent 21px),
+                radial-gradient(circle at 30% 10%, white 30px, transparent 31px),
+                radial-gradient(circle at 50% 25%, white 25px, transparent 26px),
+                radial-gradient(circle at 80% 15%, white 35px, transparent 36px);
+            background-size: 1000px 100%;
+            animation: moveBackground 40s linear infinite;
+            z-index: 0;
+        }
+
+        /* 2. Karakterler (Merkezde Sabit, Yürüme Efektli) */
+        .characters {
+            position: absolute;
+            bottom: 40px;
+            font-size: 60px;
+            z-index: 2;
+            animation: walkCycle 0.5s infinite alternate;
+        }
+
+        /* 3. Zemin Katmanı (Hareketli Kumsal) */
+        .ground {
             position: absolute;
             bottom: 0;
+            left: 0;
             width: 200%;
-            height: 150px;
-            /* Kum efekti ve çizgiler */
+            height: 100px;
             background: repeating-linear-gradient(
                 90deg, 
                 #F4A460, 
@@ -31,37 +58,32 @@
                 #E3924D 100px, 
                 #E3924D 200px
             );
-            /* Animasyon: Sonsuza kadar sola kaydır */
-            animation: moveBeach 4s linear infinite;
+            animation: moveGround 3s linear infinite;
+            z-index: 1;
         }
 
-        /* Karakterler */
-        .people {
-            position: absolute;
-            bottom: 120px;
-            z-index: 10;
-            font-size: 60px;
-            /* Hafif zıplama efekti */
-            animation: bounce 0.5s infinite alternate;
+        /* Animasyon Tanımlamaları */
+        @keyframes moveBackground {
+            from { transform: translateX(0); }
+            to { transform: translateX(-500px); }
         }
 
-        /* Zemin hareket animasyonu */
-        @keyframes moveBeach {
+        @keyframes moveGround {
             from { transform: translateX(0); }
             to { transform: translateX(-200px); }
         }
 
-        /* Karakterler için basit bir yürüme zıplaması */
-        @keyframes bounce {
-            from { bottom: 120px; }
-            to { bottom: 135px; }
+        @keyframes walkCycle {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
         }
     </style>
 </head>
 <body>
 
-    <div class="people">👫</div>
-    <div class="beach"></div>
+    <div class="background-scenery"></div>
+    <div class="characters">👫</div>
+    <div class="ground"></div>
 
 </body>
 </html>
