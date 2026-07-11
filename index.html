@@ -152,6 +152,19 @@
   .male-head, .female-head{ transition: transform .35s ease; transform-origin: center; }
   #char-wrap.kissing .male-head{ transform: translateX(13px) translateY(2px); }
   #char-wrap.kissing .female-head{ transform: translateX(-13px) translateY(2px); }
+  #char-wrap.boy-bow .male-head{ transform: translateY(10px) rotate(14deg); }
+
+  .female-head.receive-bounce{ animation: headPop .4s ease-out; }
+  @keyframes headPop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.16); } 100%{ transform:scale(1); } }
+
+  .gift-item{ position:absolute; font-size:22px; z-index:6; pointer-events:none; }
+
+  #gift-btn{
+    position:absolute; top:64px; right:20px; z-index:10;
+    width:42px; height:42px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
 
   #playlist-btn{
     position:absolute; top:16px; left:70px; z-index:10;
@@ -242,16 +255,17 @@
   <div id="hud">
     <div class="score" id="score">💕 0</div>
   </div>
+  <button id="gift-btn" aria-label="Çiçek ver">💐</button>
   <div id="hint">15.05.2026</div>
   <button id="music-btn" aria-label="Müziği aç/kapat">🔊</button>
   <button id="playlist-btn" aria-label="Spotify listesi">🎧</button>
-  <button id="kiss-btn" aria-label="Öptür">💋</button>
   <div id="playlist-panel">
     <iframe src="https://open.spotify.com/embed/playlist/4N3dAs4sjzW4GGI2s4DgiD?utm_source=generator"
       width="100%" height="152" frameborder="0"
       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
       loading="lazy"></iframe>
   </div>
+  <button id="kiss-btn" aria-label="Öptür">💋</button>
   <div id="milestone">10 kalp! 💕</div>
 </div>
 
@@ -272,6 +286,7 @@
   const playlistBtn = document.getElementById('playlist-btn');
   const playlistPanel = document.getElementById('playlist-panel');
   const kissBtn = document.getElementById('kiss-btn');
+  const giftBtn = document.getElementById('gift-btn');
 
   const HEART_EMOJIS = ['💗','💖','💕','❤️','💞'];
   const GROUND_H = 106;
@@ -290,6 +305,7 @@
   let charY = 0;
   let jumping = false;
   let kissing = false;
+  let gifting = false;
   const GRAVITY = 0.55;
   const JUMP_V = 11;
   let lastTime = null;
@@ -319,6 +335,7 @@
   });
   musicBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMusic(); });
   musicBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+  const SPOTIFY_LINK = 'https://open.spotify.com/playlist/4N3dAs4sjzW4GGI2s4DgiD?si=176e21fefe61451f&pt=2d5c07d66e32b8e3e76eb2998c0fb7a4';
   playlistBtn.addEventListener('click', (e) => { e.stopPropagation(); playlistPanel.classList.toggle('show'); });
   playlistBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
   playlistPanel.addEventListener('pointerdown', (e) => e.stopPropagation());
@@ -338,6 +355,60 @@
   }
   kissBtn.addEventListener('click', (e) => { e.stopPropagation(); doKiss(); });
   kissBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  function doGift(){
+    if (gifting) return;
+    gifting = true;
+
+    const item = document.createElement('div');
+    item.className = 'gift-item';
+    item.textContent = '🌸';
+    item.style.transition = 'left .45s ease, bottom .45s ease, transform .45s ease, opacity .3s ease';
+    item.style.left = (CHAR_LEFT + 88) + 'px';
+    item.style.bottom = (GROUND_H + charY + 55) + 'px';
+    item.style.transform = 'rotate(0deg)';
+    item.style.opacity = '1';
+    stage.appendChild(item);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        item.style.left = (CHAR_LEFT + 55) + 'px';
+        item.style.bottom = (GROUND_H + charY + 4) + 'px';
+        item.style.transform = 'rotate(220deg)';
+      });
+    });
+
+    setTimeout(() => {
+      charWrap.classList.add('boy-bow');
+      setTimeout(() => charWrap.classList.remove('boy-bow'), 420);
+    }, 420);
+
+    setTimeout(() => {
+      item.style.left = (CHAR_LEFT + 30) + 'px';
+      item.style.bottom = (GROUND_H + charY + 50) + 'px';
+      item.style.transform = 'rotate(0deg)';
+    }, 680);
+
+    setTimeout(() => {
+      item.style.left = (CHAR_LEFT + 88) + 'px';
+      item.style.bottom = (GROUND_H + charY + 55) + 'px';
+    }, 1180);
+
+    setTimeout(() => {
+      const femaleHead = document.querySelector('.female-head');
+      femaleHead.classList.add('receive-bounce');
+      setTimeout(() => femaleHead.classList.remove('receive-bounce'), 400);
+      spawnPop();
+      item.style.opacity = '0';
+    }, 1680);
+
+    setTimeout(() => {
+      item.remove();
+      gifting = false;
+    }, 2050);
+  }
+  giftBtn.addEventListener('click', (e) => { e.stopPropagation(); doGift(); });
+  giftBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   // ---- Sürekli akşam / sabah döngüsü ----
   let isDusk = false;
