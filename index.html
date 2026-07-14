@@ -287,12 +287,12 @@
     opacity:0;
   }
   .wind-gust svg{ width:100%; height:100%; overflow:visible; }
-  .wind-gust.blow{ animation: windBlow 1.1s linear forwards; }
+  .wind-gust.blow{ animation: windBlow var(--dur, 1.6s) cubic-bezier(.25,.7,.4,1) forwards; }
   @keyframes windBlow{
-    0%{ opacity:0; transform:translateX(0); }
-    12%{ opacity:1; }
-    80%{ opacity:.85; }
-    100%{ opacity:0; transform:translateX(-340px); }
+    0%{ opacity:0; transform:translate(0,0) rotate(2deg) scale(.85); }
+    18%{ opacity:1; transform:translate(-60px,4px) rotate(-1deg) scale(1); }
+    55%{ opacity:.9; transform:translate(-220px,16px) rotate(-5deg) scale(1.02); }
+    100%{ opacity:0; transform:translate(-430px,34px) rotate(-9deg) scale(1.08); }
   }
 
 
@@ -348,6 +348,41 @@
     25%{ opacity:1; transform:scale(1.1) translateY(-4px); }
     70%{ opacity:1; transform:scale(1) translateY(-6px); }
     100%{ opacity:0; transform:scale(.7) translateY(-14px); }
+  }
+
+  #cold-bubble{
+    position:absolute; z-index:8;
+    font-size:22px;
+    opacity:0; transform:scale(.4);
+    pointer-events:none;
+    text-shadow:0 2px 4px rgba(0,0,0,.15);
+  }
+  #cold-bubble.show{
+    animation: coldPop .35s ease forwards, coldBob 1s ease-in-out infinite .35s;
+  }
+  @keyframes coldPop{
+    0%{ opacity:0; transform:scale(.3); }
+    100%{ opacity:1; transform:scale(1); }
+  }
+  @keyframes coldBob{
+    0%,100%{ transform:scale(1) translateY(0) rotate(-4deg); }
+    50%{ transform:scale(1) translateY(-5px) rotate(4deg); }
+  }
+  #cold-bubble.fade-out{
+    animation: coldFadeOut .4s ease forwards;
+  }
+  @keyframes coldFadeOut{
+    0%{ opacity:1; transform:scale(1); }
+    100%{ opacity:0; transform:scale(.5) translateY(-10px); }
+  }
+  #cold-bubble.morph{
+    animation: coldMorph .5s ease;
+  }
+  @keyframes coldMorph{
+    0%{ transform:scale(1) rotate(0deg); }
+    40%{ transform:scale(.15,1.3) rotate(-8deg); }
+    70%{ transform:scale(1.25,.8) rotate(6deg); }
+    100%{ transform:scale(1) rotate(0deg); }
   }
 
   .vendor-cart{
@@ -541,6 +576,7 @@
   <button id="water-btn" aria-label="Su ver">💧</button>
   <button id="cart-btn" aria-label="Seyyar araba">📯</button>
   <div id="scare-bubble">!</div>
+  <div id="cold-bubble">❄️</div>
   <button id="cold-btn" aria-label="Rüzgar/üşüme">
     <svg viewBox="0 0 60 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M4,7 C14,-1 24,-1 30,7 C36,15 46,15 54,7" stroke="#1F3B4D" stroke-width="2.6" fill="none" stroke-linecap="round"/>
@@ -583,6 +619,7 @@
   let watering = false;
   const cartBtn = document.getElementById('cart-btn');
   const scareBubble = document.getElementById('scare-bubble');
+  const coldBubble = document.getElementById('cold-bubble');
   let vendorActive = false;
   const coldBtn = document.getElementById('cold-btn');
   let coldActive = false;
@@ -881,9 +918,11 @@
       s.className = 'wind-gust blow';
       const w = 70 + Math.random() * 60;
       const h = w * 0.4;
+      const dur = 1.3 + Math.random() * 0.7;
       s.style.width = w + 'px';
       s.style.height = h + 'px';
-      s.style.top = (20 + Math.random() * 150) + 'px';
+      s.style.setProperty('--dur', dur + 's');
+      s.style.top = (75 + Math.random() * 140) + 'px';
       s.style.right = '-100px';
       s.innerHTML = '<svg viewBox="0 0 60 24" xmlns="http://www.w3.org/2000/svg">' +
         '<path d="M4,7 C14,-1 24,-1 30,7 C36,15 46,15 54,7" stroke="#1F3B4D" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
@@ -891,7 +930,7 @@
         '<path d="M5,20 C10,17 14,17 17,20" stroke="#1F3B4D" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.5"/>' +
         '</svg>';
       stage.appendChild(s);
-      setTimeout(() => s.remove(), 1300);
+      setTimeout(() => s.remove(), dur * 1000 + 100);
     }, delay);
   }
 
@@ -900,8 +939,16 @@
     coldActive = true;
 
     // 1) Rüzgar başlıyor, kız üşüyor
-    for (let i = 0; i < 16; i++) spawnWindStreak(i * 130);
+    for (let i = 0; i < 7; i++) spawnWindStreak(i * 280 + Math.random() * 120);
     charWrap.classList.add('shiver');
+
+    const femaleHeadEl = document.querySelector('.female-head');
+    const stageRect0 = stage.getBoundingClientRect();
+    const headRect0 = femaleHeadEl.getBoundingClientRect();
+    coldBubble.style.left = (headRect0.left - stageRect0.left + headRect0.width / 2 - 11) + 'px';
+    coldBubble.style.top = (headRect0.top - stageRect0.top - 24) + 'px';
+    coldBubble.classList.remove('fade-out');
+    coldBubble.classList.add('show');
 
     // 2) Erkek ceket uzatıyor
     setTimeout(() => {
@@ -948,13 +995,26 @@
       femaleHead.classList.add('receive-bounce');
       setTimeout(() => femaleHead.classList.remove('receive-bounce'), 400);
       spawnPop();
+      coldBubble.classList.remove('show');
+      coldBubble.classList.add('morph');
+      setTimeout(() => { coldBubble.textContent = '❤️'; }, 200);
+      setTimeout(() => {
+        coldBubble.classList.remove('morph');
+        coldBubble.classList.add('show');
+      }, 500);
     }, 3100);
 
     // 5) Rüzgar diniyor, poz normale dönüyor
     setTimeout(() => {
       charWrap.classList.remove('hold-hands');
       coldActive = false;
-    }, 5600);
+      coldBubble.classList.remove('show');
+      coldBubble.classList.add('fade-out');
+      setTimeout(() => {
+        coldBubble.classList.remove('fade-out');
+        coldBubble.textContent = '❄️';
+      }, 450);
+    }, 6200);
   }
   coldBtn.addEventListener('click', (e) => { e.stopPropagation(); doCold(); });
   coldBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
