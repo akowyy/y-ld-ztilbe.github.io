@@ -191,6 +191,13 @@
   #char-wrap.kissing .female-head{ transform: translateX(-13px) translateY(2px); }
   #char-wrap.boy-bow .male-head{ transform: translateY(10px) rotate(14deg); }
 
+  #char-wrap.comfort .male-figure{ transform: translate(10px,0); transition: transform .4s ease; }
+  #char-wrap.comfort .female-figure{ transform: translate(-14px,4px); transition: transform .4s ease; }
+  #char-wrap.comfort .male-head{ transform: translate(6px,4px) rotate(8deg); }
+  #char-wrap.comfort .female-head{ transform: translate(-4px,3px) rotate(-5deg); }
+  .comfort-hand{ opacity:0; transition: opacity .35s ease; transform-box: fill-box; transform-origin: 50% 50%; }
+  #char-wrap.comfort .comfort-hand{ opacity:1; }
+
   .female-head.receive-bounce{ animation: headPop .4s ease-out; }
   @keyframes headPop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.16); } 100%{ transform:scale(1); } }
 
@@ -222,6 +229,90 @@
     width:42px; height:42px; border-radius:50%; border:none;
     background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
     box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+
+  #angry-btn{
+    position:absolute; top:16px; left:232px; z-index:10;
+    width:42px; height:42px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+
+  #dream-btn{
+    position:absolute; top:16px; left:286px; z-index:10;
+    width:42px; height:42px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+
+  #comfort-btn{
+    position:absolute; top:16px; left:340px; z-index:10;
+    width:42px; height:42px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+
+  #water-btn{
+    position:absolute; top:16px; left:394px; z-index:10;
+    width:42px; height:42px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.75); font-size:18px; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+
+  #thirst-bubble{
+    position:absolute; left:66px; top:-34px; z-index:7;
+    width:30px; height:30px; border-radius:50%;
+    background:rgba(255,255,255,.9); border:2px solid #1F3B4D;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; opacity:0; transform:scale(.3);
+    pointer-events:none;
+  }
+  #thirst-bubble::before, #thirst-bubble::after{
+    content:''; position:absolute; background:rgba(255,255,255,.9);
+    border:2px solid #1F3B4D; border-radius:50%;
+  }
+  #thirst-bubble::before{ width:9px; height:9px; right:6px; bottom:-13px; }
+  #thirst-bubble::after{ width:5px; height:5px; right:0px; bottom:-20px; }
+  #thirst-bubble.show{ animation: thirstAppear 1.6s ease forwards; }
+  @keyframes thirstAppear{
+    0%{ opacity:0; transform:scale(.3); }
+    20%{ opacity:1; transform:scale(1); }
+    80%{ opacity:1; transform:scale(1); }
+    100%{ opacity:0; transform:scale(.6); }
+  }
+
+  #char-wrap.angry .male-head circle{ fill:#e0463c; transition: fill .3s ease; }
+
+  #dream-bubble{
+    position:absolute; left:8px; top:-34px; z-index:7;
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(255,255,255,.9); border:2px solid #1F3B4D;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; opacity:0; transform:scale(.3);
+    pointer-events:none;
+  }
+  #dream-bubble::before, #dream-bubble::after{
+    content:''; position:absolute; background:rgba(255,255,255,.9);
+    border:2px solid #1F3B4D; border-radius:50%;
+  }
+  #dream-bubble::before{ width:10px; height:10px; left:6px; bottom:-14px; }
+  #dream-bubble::after{ width:6px; height:6px; left:0px; bottom:-22px; }
+
+  #dream-bubble.show{ animation: dreamAppear 3.4s ease forwards; }
+  @keyframes dreamAppear{
+    0%{ opacity:0; transform:scale(.3); }
+    15%{ opacity:1; transform:scale(1); }
+    82%{ opacity:1; transform:scale(1); }
+    92%{ opacity:.7; transform:scale(.9); }
+    100%{ opacity:0; transform:scale(.5) translateY(6px); }
+  }
+  #dream-bubble .dream-icon{ display:inline-block; }
+  #dream-bubble .dream-icon.break{ animation: heartBreakPop .5s ease-out; }
+  @keyframes heartBreakPop{
+    0%{ transform:scale(1.6) rotate(0deg); }
+    35%{ transform:scale(1.85) rotate(-8deg); }
+    60%{ transform:scale(1.3) rotate(6deg); }
+    100%{ transform:scale(1) rotate(0deg); }
   }
 
   #playlist-panel{
@@ -286,6 +377,11 @@
         </g>
       </g>
 
+      <!-- Erkeğin eli: sadece 'comfort' pozunda görünür, kızın başının üstünde -->
+      <g class="comfort-hand">
+        <ellipse cx="66" cy="14" rx="10" ry="7" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1.5" transform="rotate(-25 66 14)"/>
+      </g>
+
       <!-- Kedi: onlarla birlikte yürüyor, kafası yola (sağa) dönük -->
       <g id="cat-wrap">
         <g class="cat-tail"><path d="M112,80 Q98,74 102,60 Q104,72 114,78 Z" fill="#E8935A" stroke="#B5622C" stroke-width="1.5"/></g>
@@ -305,6 +401,8 @@
         </g>
       </g>
     </svg>
+    <div id="dream-bubble"><span class="dream-icon">💗</span></div>
+    <div id="thirst-bubble">💧</div>
   </div>
   <div id="hud">
     <div class="score" id="score">💕 0</div>
@@ -322,6 +420,10 @@
   </div>
   <button id="kiss-btn" aria-label="Öptür">💋</button>
   <button id="bench-btn" aria-label="Bank">🪑</button>
+  <button id="angry-btn" aria-label="Kızgın mod">😠</button>
+  <button id="dream-btn" aria-label="Hayal kur">💭</button>
+  <button id="comfort-btn" aria-label="Sarıl">🤗</button>
+  <button id="water-btn" aria-label="Su ver">💧</button>
   <div id="milestone">10 kalp! 💕</div>
 </div>
 
@@ -345,6 +447,16 @@
   const kissBtn = document.getElementById('kiss-btn');
   const benchBtn = document.getElementById('bench-btn');
   const giftBtn = document.getElementById('gift-btn');
+  const angryBtn = document.getElementById('angry-btn');
+  let angry = false;
+  const dreamBtn = document.getElementById('dream-btn');
+  const dreamBubble = document.getElementById('dream-bubble');
+  let dreaming = false;
+  const comfortBtn = document.getElementById('comfort-btn');
+  let comforting = false;
+  const waterBtn = document.getElementById('water-btn');
+  const thirstBubble = document.getElementById('thirst-bubble');
+  let watering = false;
 
   const HEART_EMOJIS = ['💗','💖','💕','❤️','💞'];
   const GROUND_H = 106;
@@ -461,6 +573,111 @@
   }
   benchBtn.addEventListener('click', (e) => { e.stopPropagation(); requestBench(); });
   benchBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+  angryBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    angry = !angry;
+    charWrap.classList.toggle('angry', angry);
+    angryBtn.textContent = angry ? '😊' : '😠';
+  });
+  angryBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  function doDream(){
+    if (dreaming) return;
+    dreaming = true;
+    const icon = dreamBubble.querySelector('.dream-icon');
+    icon.textContent = '💗';
+    icon.classList.remove('break');
+    icon.style.opacity = '1';
+    dreamBubble.classList.remove('show');
+    void dreamBubble.offsetWidth;
+    dreamBubble.classList.add('show');
+    setTimeout(() => { charWrap.classList.add('angry'); }, 1400);
+    setTimeout(() => {
+      icon.textContent = '💔';
+      void icon.offsetWidth;
+      icon.classList.add('break');
+    }, 2100);
+    setTimeout(() => {
+      dreamBubble.classList.remove('show');
+      dreaming = false;
+    }, 3100);
+    setTimeout(() => {
+      if (!angry) charWrap.classList.remove('angry');
+    }, 3800);
+  }
+  dreamBtn.addEventListener('click', (e) => { e.stopPropagation(); doDream(); });
+  dreamBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  function doComfort(){
+    if (comforting) return;
+    comforting = true;
+    charWrap.classList.remove('running');
+    charWrap.classList.add('comfort');
+    spawnPop();
+    setTimeout(spawnPop, 600);
+    setTimeout(() => {
+      charWrap.classList.remove('comfort');
+      comforting = false;
+    }, 2400);
+  }
+  comfortBtn.addEventListener('click', (e) => { e.stopPropagation(); doComfort(); });
+  comfortBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  function doWater(){
+    if (watering) return;
+    watering = true;
+
+    thirstBubble.classList.remove('show');
+    void thirstBubble.offsetWidth;
+    thirstBubble.classList.add('show');
+
+    setTimeout(() => {
+      const item = document.createElement('div');
+      item.className = 'gift-item water-bottle-item';
+      item.innerHTML = '<svg width="16" height="32" viewBox="0 0 16 32">' +
+        '<rect x="2" y="7" width="12" height="23" rx="3" fill="#eaf6fb" stroke="#1F3B4D" stroke-width="1"/>' +
+        '<rect x="4.5" y="1.5" width="7" height="5.5" rx="1.3" fill="#1565c0" stroke="#0d3d70" stroke-width="1"/>' +
+        '<rect x="2" y="14" width="12" height="8" fill="#1976d2"/>' +
+        '<text x="8" y="19.2" font-size="3.6" font-family="Baloo 2, sans-serif" font-weight="800" fill="#ffffff" text-anchor="middle">Nazlı</text>' +
+        '</svg>';
+      item.style.transition = 'left .45s ease, bottom .45s ease, transform .45s ease, opacity .3s ease';
+      item.style.left = (CHAR_LEFT + 30) + 'px';
+      item.style.bottom = (GROUND_H + charY + 55) + 'px';
+      item.style.transform = 'rotate(0deg)';
+      item.style.opacity = '1';
+      stage.appendChild(item);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          item.style.left = (CHAR_LEFT + 60) + 'px';
+          item.style.bottom = (GROUND_H + charY + 35) + 'px';
+          item.style.transform = 'rotate(-25deg)';
+        });
+      });
+
+      setTimeout(() => {
+        item.style.left = (CHAR_LEFT + 88) + 'px';
+        item.style.bottom = (GROUND_H + charY + 45) + 'px';
+        item.style.transform = 'rotate(-45deg)';
+      }, 480);
+
+      setTimeout(() => {
+        thirstBubble.classList.remove('show');
+        const femaleHead = document.querySelector('.female-head');
+        femaleHead.classList.add('receive-bounce');
+        setTimeout(() => femaleHead.classList.remove('receive-bounce'), 400);
+        spawnPop();
+        item.style.opacity = '0';
+      }, 980);
+
+      setTimeout(() => {
+        item.remove();
+        watering = false;
+      }, 1350);
+    }, 900);
+  }
+  waterBtn.addEventListener('click', (e) => { e.stopPropagation(); doWater(); });
+  waterBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function doGift(){
     if (gifting) return;
@@ -584,7 +801,7 @@
       charWrap.style.bottom = (GROUND_H + charY) + 'px';
       charWrap.classList.remove('running');
     } else {
-      if (!kissing && !sitting) charWrap.classList.add('running');
+      if (!kissing && !sitting && !comforting) charWrap.classList.add('running');
     }
 
     lastSpawn += dt;
