@@ -97,6 +97,31 @@
   #palms span{ font-size:56px; opacity:.92; filter:drop-shadow(0 4px 3px rgba(0,0,0,.2)); }
   @keyframes movePalms{ from{ transform:translateX(0); } to{ transform:translateX(-200px); } }
 
+  .transit-sign{
+    position:absolute; z-index:4; bottom:106px; width:74px; height:96px;
+    pointer-events:none;
+  }
+  .transit-sign .pole{
+    position:absolute; left:34px; top:32px; width:5px; height:64px;
+    background:#5a5a5a; border-radius:2px;
+  }
+  .transit-sign .board{
+    position:absolute; top:0; left:0; width:74px; height:36px;
+    background:#0f2a4a; border-radius:7px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 8px rgba(0,0,0,.3);
+    padding:0 4px;
+  }
+  .transit-sign .stop-name{
+    color:#fff; font-size:11px; font-weight:800; letter-spacing:.3px;
+    text-align:center; line-height:1.15;
+  }
+  .transit-sign.go{ animation: signPass 8.5s linear forwards; }
+  @keyframes signPass{
+    from{ left:112%; }
+    to{ left:-20%; }
+  }
+
   #char-wrap{
     position:absolute; bottom:106px; left:60px; width:170px; height:100px; z-index:5;
   }
@@ -504,8 +529,8 @@
           <path d="M70,25 Q69,10 82,9 Q95,10 94,25 Q97,42 90,54 Q87,43 87,29 Q84,33 82,31 Q80,33 77,29 Q77,43 74,54 Q67,42 70,25 Z" fill="#8B5E3C" stroke="#6E4A2E" stroke-width="1"/>
         </g>
         <g class="necklace">
-          <path d="M77,36 Q82,41 87,36" fill="none" stroke="#d4af37" stroke-width="0.8"/>
-          <g transform="translate(82,42) scale(0.55)">
+          <path d="M78,36 Q82,39.5 86,36" fill="none" stroke="#d4af37" stroke-width="0.6"/>
+          <g transform="translate(82,40) scale(0.32)">
             <circle cx="0" cy="-2.8" r="2.4" fill="none" stroke="#c9a227" stroke-width="1.1"/>
             <circle cx="-2.8" cy="0" r="2.4" fill="none" stroke="#c9a227" stroke-width="1.1"/>
             <circle cx="2.8" cy="0" r="2.4" fill="none" stroke="#c9a227" stroke-width="1.1"/>
@@ -1254,6 +1279,27 @@
 
     requestAnimationFrame(loop);
   }
+
+  // ---- Durak levhası: Karataş sahil hattı, her 30 sn'de bir sıradaki tek durak, 1→9→1 sonsuz döngü ----
+  const TRANSIT_STOPS = ['Konak İskele','Karataş','Karantina','Köprü','Sadık Bey','Göztepe','Güzelyalı','Üçkuyular','F.Altay'];
+  const TRANSIT_ORDER = (() => {
+    const order = [];
+    for (let i = 0; i < TRANSIT_STOPS.length; i++) order.push(i);
+    for (let i = TRANSIT_STOPS.length - 2; i > 0; i--) order.push(i);
+    return order;
+  })();
+  let transitIdx = 0;
+
+  function spawnTransitSign(){
+    const sign = document.createElement('div');
+    sign.className = 'transit-sign go';
+    sign.innerHTML = '<div class="board"><span class="stop-name">' + TRANSIT_STOPS[TRANSIT_ORDER[transitIdx]] + '</span></div><div class="pole"></div>';
+    stage.appendChild(sign);
+    setTimeout(() => sign.remove(), 8600);
+    transitIdx = (transitIdx + 1) % TRANSIT_ORDER.length;
+  }
+  spawnTransitSign();
+  setInterval(spawnTransitSign, 30000);
 
   // ---- Ziyaret sayacı: telefonda kalıcı, hiç sıfırlanmıyor ----
   (function trackVisit(){
