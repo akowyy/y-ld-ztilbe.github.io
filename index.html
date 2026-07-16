@@ -678,6 +678,49 @@
   let jumping = false;
   let kissing = false;
   let gifting = false;
+  let giftIndex = 0;
+  const GIFT_ITEMS = [
+    { size: 22, html: '🌸' },
+    { size: 24, html: '🌻' },
+    { size: 26, html:
+      '<svg width="20" height="30" viewBox="0 0 30 46" xmlns="http://www.w3.org/2000/svg">' +
+      '<defs><linearGradient id="packGrad" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#FFE79A"/><stop offset="55%" stop-color="#FFC94A"/><stop offset="100%" stop-color="#FFFFFF"/>' +
+      '</linearGradient></defs>' +
+      '<rect x="1.5" y="1.5" width="27" height="43" rx="3" fill="url(#packGrad)" stroke="#C98A2E" stroke-width="1.2"/>' +
+      '<circle cx="15" cy="20" r="7" fill="#F2A65A"/>' +
+      '<circle cx="15" cy="20" r="7" fill="none" stroke="#D98A3D" stroke-width="0.8"/>' +
+      '<path d="M12 21c0-3 1.5-5 3-6 1.5 1 3 3 3 6 0 2-1.5 3-3 3s-3-1-3-3z" fill="#4C8C3B"/>' +
+      '<text x="15" y="10" font-family="Baloo 2, sans-serif" font-size="6" font-weight="800" fill="#8a5a1a" text-anchor="middle">ORIS</text>' +
+      '<text x="15" y="34" font-family="Nunito, sans-serif" font-size="4.2" font-weight="700" fill="#8a5a1a" text-anchor="middle">MANGO</text>' +
+      '</svg>' },
+    { size: 26, html:
+      '<svg width="22" height="30" viewBox="0 0 30 40" xmlns="http://www.w3.org/2000/svg">' +
+      '<circle cx="15" cy="7" r="5.2" fill="none" stroke="#D9A441" stroke-width="2.4"/>' +
+      '<rect x="13.8" y="11.5" width="2.4" height="6" fill="#D9A441"/>' +
+      '<path d="M8 18 L15 12 L22 18 L22 30 L18 30 L18 24 L12 24 L12 30 L8 30 Z" fill="#E7B45A" stroke="#B4812A" stroke-width="1"/>' +
+      '<rect x="13" y="20" width="4" height="6" fill="#B4812A"/>' +
+      '<path d="M15 17.5 L15 32 M15 32 L18 35 M15 32 L18 29" stroke="#D9A441" stroke-width="2.4" stroke-linecap="round"/>' +
+      '</svg>' },
+    { size: 26, html:
+      '<svg width="30" height="20" viewBox="0 0 46 30" xmlns="http://www.w3.org/2000/svg">' +
+      '<rect x="1" y="1" width="44" height="28" rx="5" fill="#ffffff" stroke="#cfcfcf" stroke-width="1"/>' +
+      '<path d="M1 21 Q11 15 23 21 T45 21 L45 25 Q45 28 42 28 L4 28 Q1 28 1 25 Z" fill="#E8622C"/>' +
+      '<rect x="6" y="15" width="3" height="9" rx="1.5" fill="#6b4a2b"/>' +
+      '<rect x="10.5" y="14" width="3" height="10" rx="1.5" fill="#6b4a2b"/>' +
+      '<text x="23" y="10" font-family="Baloo 2, sans-serif" font-size="7.5" font-weight="800" fill="#d81f2a" text-anchor="middle">kinder</text>' +
+      '<text x="23" y="16.5" font-family="Nunito, sans-serif" font-size="4" font-weight="700" fill="#1f6fb2" text-anchor="middle">Süt Dilimi</text>' +
+      '</svg>' },
+    { size: 26, html:
+      '<svg width="26" height="26" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">' +
+      '<rect x="1.5" y="1.5" width="37" height="37" rx="6" fill="#E63A2E" stroke="#B72A21" stroke-width="1.2"/>' +
+      '<rect x="7" y="9" width="2.6" height="20" rx="1.3" fill="#D9A441"/>' +
+      '<rect x="11.5" y="7" width="2.6" height="22" rx="1.3" fill="#E3B15C"/>' +
+      '<rect x="16" y="10" width="2.6" height="19" rx="1.3" fill="#D9A441"/>' +
+      '<circle cx="27" cy="15" r="5.5" fill="#FFD34D"/>' +
+      '<text x="20" y="7.5" font-family="Baloo 2, sans-serif" font-size="6" font-weight="800" fill="#ffffff" text-anchor="middle">ATIŞTIR</text>' +
+      '</svg>' }
+  ];
   let sitting = false;
   let benchPending = false;
   const GRAVITY = 0.55;
@@ -1057,9 +1100,14 @@
     if (gifting) return;
     gifting = true;
 
+    const gift = GIFT_ITEMS[giftIndex];
+    giftIndex = (giftIndex + 1) % GIFT_ITEMS.length;
+
     const item = document.createElement('div');
     item.className = 'gift-item';
-    item.textContent = '🌸';
+    item.style.fontSize = gift.size + 'px';
+    item.style.lineHeight = '1';
+    item.innerHTML = gift.html;
     item.style.transition = 'left .45s ease, bottom .45s ease, transform .45s ease, opacity .3s ease';
     item.style.left = (CHAR_LEFT + 88) + 'px';
     item.style.bottom = (GROUND_H + charY + 55) + 'px';
