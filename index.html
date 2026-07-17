@@ -184,6 +184,8 @@
 
   .bench{ position:absolute; bottom:106px; width:70px; height:50px; z-index:3; }
   .bench svg{ width:100%; height:100%; overflow:visible; }
+  .binbin-prop{ position:absolute; bottom:106px; width:100px; height:70px; z-index:3; }
+  .binbin-prop svg{ width:100%; height:100%; overflow:visible; }
   .cat-tail{ transform-origin: 152px 80px; animation: tailWag 1.1s ease-in-out infinite alternate; }
   @keyframes tailWag{ from{ transform:rotate(8deg); } to{ transform:rotate(-10deg); } }
   .cat-leg{ transform-origin: center top; }
@@ -247,6 +249,15 @@
   #music-btn{}
 
   .male-head, .female-head{ transition: transform .35s ease; transform-box: fill-box; transform-origin: 50% 50%; }
+
+  /* ---- Binbin (elektrikli scooter) sürüş pozu ---- */
+  .scooter-group{ display:none; }
+  #char-wrap.riding .scooter-group{ display:block; }
+  #char-wrap.riding .leg-l, #char-wrap.riding .leg-r{ animation:none !important; }
+  #char-wrap.riding .male-figure{ transform: translate(11px,-13px); transition: transform .35s ease; }
+  #char-wrap.riding .female-figure{ transform: translate(-11px,-13px); transition: transform .35s ease; }
+  #char-wrap.riding .male-head{ transform: translateY(-1px) rotate(-3deg); }
+  #char-wrap.riding .female-head{ transform: translateY(-1px) rotate(2deg); }
   #char-wrap.kissing .male-head{ transform: translateX(13px) translateY(2px); }
   #char-wrap.kissing .female-head{ transform: translateX(-13px) translateY(2px); }
   #char-wrap.boy-bow .male-head{ transform: translateY(10px) rotate(14deg); }
@@ -549,6 +560,21 @@
         <ellipse cx="57" cy="57" rx="8" ry="6" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1.5"/>
       </g>
 
+      <!-- Binbin: elektrikli scooter, sadece 'riding' pozunda görünür -->
+      <g class="scooter-group">
+        <circle cx="27" cy="93" r="8.5" fill="#1a1a1a"/>
+        <circle cx="27" cy="93" r="3.2" fill="#666"/>
+        <circle cx="88" cy="93" r="8.5" fill="#1a1a1a"/>
+        <circle cx="88" cy="93" r="3.2" fill="#666"/>
+        <rect x="14" y="82" width="90" height="8" rx="3" fill="#2fb6c4" stroke="#187f89" stroke-width="1.4"/>
+        <path d="M11,86 Q19,78 27,85" fill="none" stroke="#187f89" stroke-width="3" stroke-linecap="round"/>
+        <rect x="82" y="44" width="5" height="38" rx="2" fill="#2fb6c4" stroke="#187f89" stroke-width="1"/>
+        <rect x="79.5" y="60" width="10" height="6" rx="1.5" fill="#1a1a1a"/>
+        <rect x="66" y="41" width="36" height="6" rx="3" fill="#1a1a1a"/>
+        <circle cx="68" cy="44" r="4.2" fill="#1a1a1a"/>
+        <circle cx="100" cy="44" r="4.2" fill="#1a1a1a"/>
+      </g>
+
       <!-- Kedi: onlarla birlikte yürüyor, kafası yola (sağa) dönük -->
       <g id="cat-wrap">
         <g class="cat-tail"><path d="M112,80 Q98,74 102,60 Q104,72 114,78 Z" fill="#E8935A" stroke="#B5622C" stroke-width="1.5"/></g>
@@ -605,6 +631,19 @@
         <circle cx="24" cy="24.5" r="2.2" fill="#c98a52"/>
       </svg>
     </button>
+    <button id="binbin-btn" aria-label="Binbin scooter">
+      <svg viewBox="0 0 44 40" width="22" height="20">
+        <circle cx="9" cy="33" r="5.5" fill="#1a1a1a"/>
+        <circle cx="9" cy="33" r="2" fill="#666"/>
+        <circle cx="35" cy="33" r="5.5" fill="#1a1a1a"/>
+        <circle cx="35" cy="33" r="2" fill="#666"/>
+        <path d="M7,29 L33,25 L33,29 L9,33 Z" fill="#2fb6c4" stroke="#187f89" stroke-width="1"/>
+        <rect x="31" y="4" width="4" height="23" rx="1.5" fill="#2fb6c4" stroke="#187f89" stroke-width="0.8" transform="rotate(-6 33 15)"/>
+        <rect x="29.5" y="14" width="7" height="4" rx="1" fill="#1a1a1a"/>
+        <rect x="20" y="2" width="24" height="4" rx="2" fill="#1a1a1a"/>
+        <circle cx="21" cy="4" r="3" fill="#1a1a1a"/>
+      </svg>
+    </button>
   </div>
   <div id="playlist-panel">
     <button id="playlist-close" aria-label="Kapat">✕</button>
@@ -657,6 +696,9 @@
   let coldActive = false;
   const feedBtn = document.getElementById('feed-btn');
   let feeding = false;
+  const binbinBtn = document.getElementById('binbin-btn');
+  let binbinPending = false;
+  let binbinActive = false;
 
   const HEART_EMOJIS = ['💗','💖','💕','❤️','💞'];
   const GROUND_H = 106;
@@ -673,6 +715,7 @@
   let spawnGap = 2200;
   let collectibles = [];
   let benches = [];
+  let binbins = [];
   let vy = 0;
   let charY = 0;
   let jumping = false;
@@ -719,6 +762,28 @@
       '<rect x="16" y="10" width="2.6" height="19" rx="1.3" fill="#D9A441"/>' +
       '<circle cx="27" cy="15" r="5.5" fill="#FFD34D"/>' +
       '<text x="20" y="7.5" font-family="Baloo 2, sans-serif" font-size="6" font-weight="800" fill="#ffffff" text-anchor="middle">ATIŞTIR</text>' +
+      '</svg>' },
+    { size: 28, html:
+      '<svg width="20" height="30" viewBox="0 0 26 40" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M9 2 h8 v4 l3 4 v27 a2 2 0 0 1-2 2 H8 a2 2 0 0 1-2-2 V10 l3-4 Z" fill="#1c5fa8" stroke="#0d3d73" stroke-width="0.8"/>' +
+      '<path d="M6 18 Q13 22 20 18 V33 a2 2 0 0 1-2 2 H8 a2 2 0 0 1-2-2 Z" fill="#ffffff"/>' +
+      '<text x="13" y="16" font-family="Baloo 2, sans-serif" font-size="6" font-weight="800" fill="#ffffff" text-anchor="middle">kefir</text>' +
+      '<text x="13" y="27" font-family="Nunito, sans-serif" font-size="3.6" font-weight="700" fill="#1c5fa8" text-anchor="middle">Sade</text>' +
+      '</svg>' },
+    { size: 26, html:
+      '<svg width="22" height="26" viewBox="0 0 30 34" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M4 5 L26 5 L24 32 a2 2 0 0 1-2 2 H8 a2 2 0 0 1-2-2 Z" fill="#8c1d4a"/>' +
+      '<ellipse cx="15" cy="5" rx="11" ry="2.4" fill="#7a1740"/>' +
+      '<text x="15" y="20" font-family="Baloo 2, sans-serif" font-size="5" font-weight="800" fill="#ffffff" text-anchor="middle">Acılı</text>' +
+      '<text x="15" y="26" font-family="Baloo 2, sans-serif" font-size="5" font-weight="800" fill="#ffffff" text-anchor="middle">Ayran</text>' +
+      '</svg>' },
+    { size: 30, html:
+      '<svg width="16" height="30" viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg">' +
+      '<rect x="8" y="1" width="4" height="4" fill="#2e7d4f"/>' +
+      '<path d="M7 5 h6 v3 l3 5 v22 a2 2 0 0 1-2 2 H6 a2 2 0 0 1-2-2 V13 l3-5 Z" fill="#f5f0c8" stroke="#cfc98f" stroke-width="0.6"/>' +
+      '<circle cx="10" cy="20" r="6" fill="#1a6b3c" opacity="0.9"/>' +
+      '<text x="10" y="18.5" font-family="Baloo 2, sans-serif" font-size="3.6" font-weight="800" fill="#ffe14d" text-anchor="middle">SIRMA</text>' +
+      '<text x="10" y="22.5" font-family="Nunito, sans-serif" font-size="2.6" font-weight="700" fill="#ffffff" text-anchor="middle">Chur Chill</text>' +
       '</svg>' }
   ];
   let sitting = false;
@@ -745,6 +810,25 @@
     el.style.right = '-90px';
     stage.appendChild(el);
     benches.push({ el, x: window.innerWidth + 90, w: 70, triggered: false });
+  }
+
+  function spawnBinbinProp(){
+    const el = document.createElement('div');
+    el.className = 'binbin-prop';
+    el.innerHTML = '<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">' +
+      '<circle cx="16" cy="60" r="9" fill="#1a1a1a"/><circle cx="16" cy="60" r="3.5" fill="#666"/>' +
+      '<circle cx="78" cy="60" r="9" fill="#1a1a1a"/><circle cx="78" cy="60" r="3.5" fill="#666"/>' +
+      '<rect x="6" y="47" width="86" height="9" rx="3" fill="#2fb6c4" stroke="#187f89" stroke-width="1.4"/>' +
+      '<path d="M3,51 Q12,42 21,50" fill="none" stroke="#187f89" stroke-width="3" stroke-linecap="round"/>' +
+      '<rect x="72" y="16" width="6" height="34" rx="2" fill="#2fb6c4" stroke="#187f89" stroke-width="1"/>' +
+      '<rect x="69" y="30" width="12" height="7" rx="1.5" fill="#1a1a1a"/>' +
+      '<rect x="56" y="13" width="38" height="7" rx="3" fill="#1a1a1a"/>' +
+      '<circle cx="58" cy="16.5" r="4.6" fill="#1a1a1a"/>' +
+      '<circle cx="92" cy="16.5" r="4.6" fill="#1a1a1a"/>' +
+      '</svg>';
+    el.style.right = '-110px';
+    stage.appendChild(el);
+    binbins.push({ el, x: window.innerWidth + 110, w: 100, triggered: false });
   }
 
   function startSit(){
@@ -816,6 +900,34 @@
   }
   benchBtn.addEventListener('click', (e) => { e.stopPropagation(); requestBench(); });
   benchBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  function requestBinBin(){
+    if (binbinPending || binbinActive || sitting || kissing) return;
+    binbinPending = true;
+    setTimeout(() => {
+      binbinPending = false;
+      spawnBinbinProp();
+    }, 5000);
+  }
+  binbinBtn.addEventListener('click', (e) => { e.stopPropagation(); requestBinBin(); });
+  binbinBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  function mountBinBin(){
+    binbinActive = true;
+    charWrap.classList.remove('running');
+    charWrap.classList.add('riding');
+    const savedSpeed = speed;
+    speed = savedSpeed * 1.7;
+    spawnPop();
+    setTimeout(spawnPop, 3200);
+    setTimeout(spawnPop, 6600);
+    setTimeout(() => {
+      charWrap.classList.remove('riding');
+      charWrap.classList.add('running');
+      speed = savedSpeed;
+      binbinActive = false;
+    }, 10000);
+  }
   angryBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     angry = !angry;
@@ -1267,7 +1379,7 @@
       charWrap.style.bottom = (GROUND_H + charY) + 'px';
       charWrap.classList.remove('running');
     } else {
-      if (!kissing && !sitting && !comforting && !feeding) charWrap.classList.add('running');
+      if (!kissing && !sitting && !comforting && !feeding && !binbinActive) charWrap.classList.add('running');
     }
 
     lastSpawn += dt;
@@ -1322,6 +1434,25 @@
       if (b.x + b.w < -20){
         b.el.remove();
         benches.splice(i, 1);
+      }
+    }
+
+    for (let i = binbins.length - 1; i >= 0; i--){
+      const bb = binbins[i];
+      bb.x -= speed * dtScale;
+      bb.el.style.right = (window.innerWidth - bb.x - bb.w) + 'px';
+
+      if (!bb.triggered && !binbinActive && bb.x < charRight && bb.x + bb.w > charLeft){
+        bb.triggered = true;
+        bb.el.remove();
+        binbins.splice(i, 1);
+        mountBinBin();
+        continue;
+      }
+
+      if (bb.x + bb.w < -20){
+        bb.el.remove();
+        binbins.splice(i, 1);
       }
     }
 
