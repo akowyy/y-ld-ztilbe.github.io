@@ -258,6 +258,12 @@
   #char-wrap.riding .female-figure{ transform: translate(-11px,-13px); transition: transform .35s ease; }
   #char-wrap.riding .male-head{ transform: translateY(-1px) rotate(-3deg); }
   #char-wrap.riding .female-head{ transform: translateY(-1px) rotate(2deg); }
+
+  /* ---- Çocuk (K butonu): aralarında el ele yürüme pozu ---- */
+  .kid-figure, .kid-hand-l, .kid-hand-r{ display:none; }
+  #char-wrap.kidwalk .kid-figure, #char-wrap.kidwalk .kid-hand-l, #char-wrap.kidwalk .kid-hand-r{ display:block; }
+  #char-wrap.kidwalk .male-figure{ transform: translate(-5px,0); transition: transform .35s ease; }
+  #char-wrap.kidwalk .female-figure{ transform: translate(5px,0); transition: transform .35s ease; }
   #char-wrap.kissing .male-head{ transform: translateX(13px) translateY(2px); }
   #char-wrap.kissing .female-head{ transform: translateX(-13px) translateY(2px); }
   #char-wrap.boy-bow .male-head{ transform: translateY(10px) rotate(14deg); }
@@ -560,6 +566,21 @@
         <ellipse cx="57" cy="57" rx="8" ry="6" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1.5"/>
       </g>
 
+      <!-- Çocuk: sadece 'kidwalk' pozunda görünür, aralarında el ele yürüyor -->
+      <g class="kid-figure">
+        <g class="leg leg-l"><rect x="53" y="83" width="5" height="12" rx="2.5" fill="#1F3B4D"/></g>
+        <g class="leg leg-r"><rect x="60" y="83" width="5" height="12" rx="2.5" fill="#1F3B4D"/></g>
+        <rect x="51" y="65" width="14" height="20" rx="5" fill="#4CAF6D" stroke="#1F3B4D" stroke-width="1.5"/>
+        <g class="kid-head">
+          <ellipse cx="49.5" cy="57" rx="2" ry="2.6" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1"/>
+          <ellipse cx="66.5" cy="57" rx="2" ry="2.6" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1"/>
+          <circle cx="58" cy="55" r="8" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1.5"/>
+          <path d="M50,57 Q49,44 58,43 Q67,44 66,57 Q66.5,50 63.5,52.5 Q61.5,49 58,52.5 Q54.5,49 52.5,52.5 Q49.5,50 50,57 Z" fill="#8B6540" stroke="#6E4A2E" stroke-width="0.5"/>
+        </g>
+      </g>
+      <g class="kid-hand-l"><ellipse cx="49" cy="67" rx="5" ry="4" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1.2"/></g>
+      <g class="kid-hand-r"><ellipse cx="67" cy="67" rx="5" ry="4" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1.2"/></g>
+
       <!-- Binbin: elektrikli scooter, sadece 'riding' pozunda görünür -->
       <g class="scooter-group">
         <circle cx="27" cy="93" r="8.5" fill="#1a1a1a"/>
@@ -644,6 +665,7 @@
         <circle cx="21" cy="4" r="3" fill="#1a1a1a"/>
       </svg>
     </button>
+    <button id="kid-btn" aria-label="Çocuğumuz gelsin" style="font-weight:800; font-size:17px; color:#1F3B4D;">K</button>
   </div>
   <div id="playlist-panel">
     <button id="playlist-close" aria-label="Kapat">✕</button>
@@ -699,6 +721,8 @@
   const binbinBtn = document.getElementById('binbin-btn');
   let binbinPending = false;
   let binbinActive = false;
+  const kidBtn = document.getElementById('kid-btn');
+  let kidActive = false;
 
   const HEART_EMOJIS = ['💗','💖','💕','❤️','💞'];
   const GROUND_H = 106;
@@ -902,7 +926,7 @@
   benchBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function requestBinBin(){
-    if (binbinPending || binbinActive || sitting || kissing) return;
+    if (binbinPending || binbinActive || sitting || kissing || kidActive) return;
     binbinPending = true;
     setTimeout(() => {
       binbinPending = false;
@@ -928,6 +952,21 @@
       binbinActive = false;
     }, 10000);
   }
+
+  function requestKid(){
+    if (kidActive || sitting || kissing || binbinActive) return;
+    kidActive = true;
+    charWrap.classList.add('kidwalk');
+    spawnPop();
+    setTimeout(spawnPop, 5000);
+    setTimeout(spawnPop, 10000);
+    setTimeout(() => {
+      charWrap.classList.remove('kidwalk');
+      kidActive = false;
+    }, 15000);
+  }
+  kidBtn.addEventListener('click', (e) => { e.stopPropagation(); requestKid(); });
+  kidBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
   angryBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     angry = !angry;
@@ -1442,7 +1481,7 @@
       bb.x -= speed * dtScale;
       bb.el.style.right = (window.innerWidth - bb.x - bb.w) + 'px';
 
-      if (!bb.triggered && !binbinActive && bb.x < charRight && bb.x + bb.w > charLeft){
+      if (!bb.triggered && !binbinActive && !kidActive && bb.x < charRight && bb.x + bb.w > charLeft){
         bb.triggered = true;
         bb.el.remove();
         binbins.splice(i, 1);
