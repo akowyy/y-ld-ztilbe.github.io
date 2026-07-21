@@ -105,7 +105,7 @@
 
   #char-wrap.snug .male-figure{ transform: translate(6px,0); transition: transform .4s ease; }
   #char-wrap.snug .female-figure{ transform: translate(-6px,0); transition: transform .4s ease; }
-  #char-wrap.sitting.snug{ transform: translate(93px,-22px); transition: transform .5s ease; }
+  #char-wrap.sitting.snug{ transform: translate(84px,-10px); transition: transform .5s ease; }
 #char-wrap.sitting.snug .female-head{ transform:translate(0,0) rotate(0deg); }
 
   .transit-sign{
@@ -223,11 +223,11 @@
   }
 
   #hud{
-    position:absolute; top:16px; right:20px; z-index:10;
+    position:absolute; top:112px; right:20px; z-index:10;
     font-family:'Baloo 2', sans-serif; color:var(--ink); text-align:right;
     text-shadow:0 2px 0 rgba(255,255,255,.5);
   }
-  #hud .score{ font-size:26px; font-weight:800; }
+  #hud .score{ font-size:22px; font-weight:800; }
 
   #hint{
     position:absolute; top:64px; left:20px; z-index:10;
@@ -546,10 +546,120 @@
     opacity:0; pointer-events:none; z-index:9; transition:opacity .25s, transform .25s;
   }
   #milestone.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  #char-wrap.cheering .male-figure{ animation: cheerBounce .55s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+  #char-wrap.cheering .female-figure{ animation: cheerBounce .55s ease-in-out infinite .18s; transform-box: fill-box; transform-origin: 50% 100%; }
+  #char-wrap.cheering .male-head{ animation: cheerHead .55s ease-in-out infinite; }
+  #char-wrap.cheering .female-head{ animation: cheerHead .55s ease-in-out infinite .18s; }
+  #char-wrap.cheering .leg{ animation:none; }
+  #char-wrap.cheering #cat-wrap{ opacity:0; transition: opacity .3s ease; }
+  @keyframes cheerBounce{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-7px) rotate(-3deg); } }
+  @keyframes cheerHead{ 0%,100%{ transform:rotate(0deg); } 50%{ transform:rotate(8deg); } }
+
+  #kid-walker{
+    position:absolute; bottom:106px; left:150px; width:26px; height:52px; z-index:6;
+    opacity:0; pointer-events:none; transition: left 1.1s ease-in-out, opacity .3s ease, transform .3s ease;
+  }
+  #kid-walker.show{ opacity:1; }
+  #kid-walker svg{ width:100%; height:100%; overflow:visible; }
+  #kid-walker .kw-leg{ transform-box: fill-box; transform-origin: 50% 0%; }
+  #kid-walker.walking .kw-leg-l{ animation: legSwing .22s linear infinite; }
+  #kid-walker.walking .kw-leg-r{ animation: legSwing .22s linear infinite reverse; }
+  #kid-walker.blowing{ transform: rotate(10deg) translateY(2px); transition: transform .3s ease; }
+
+  #cake-prop{
+    position:absolute; left:205px; bottom:106px; width:58px; z-index:5;
+    opacity:0; transform:translateY(12px) scale(.7); pointer-events:none;
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  #cake-prop svg{ overflow:visible; }
+  #cake-prop.show{ opacity:1; transform:translateY(0) scale(1); }
+  #cake-prop .flame{
+    transform-box: fill-box; transform-origin: 50% 100%;
+    animation: flameFlicker .45s ease-in-out infinite alternate;
+  }
+  @keyframes flameFlicker{ 0%{ transform:scale(1) rotate(-3deg); } 100%{ transform:scale(1.18) rotate(3deg); } }
+  #cake-prop.blown .flame{ opacity:0; transition: opacity .3s ease; animation:none; }
+  #cake-prop.blown .smoke{ animation: smokeUp 1s ease-out forwards; }
+  #cake-prop .smoke{ opacity:0; transform-box: fill-box; transform-origin:50% 100%; }
+  @keyframes smokeUp{ 0%{ opacity:.8; transform:translateY(0) scale(.6); } 100%{ opacity:0; transform:translateY(-14px) scale(1.3); } }
+
+  #birthday-bubble{
+    position:absolute; left:120px; bottom:210px; z-index:8;
+    font-family:'Baloo 2', sans-serif; font-weight:800; font-size:15px;
+    color:#1F3B4D; background:rgba(255,255,255,.9); padding:8px 16px;
+    border-radius:20px; white-space:nowrap; box-shadow:0 3px 8px rgba(0,0,0,.15);
+    opacity:0; transform:translateY(8px) scale(.9);
+    transition: opacity .35s ease, transform .35s ease; pointer-events:none;
+  }
+  #birthday-bubble.show{ opacity:1; transform:translateY(0) scale(1); }
+
+  .confetti-piece{
+    position:absolute; width:6px; height:10px; z-index:9; pointer-events:none; opacity:0;
+  }
+  .confetti-piece.burst{ animation: confettiFall 1.5s ease-out forwards; }
+  @keyframes confettiFall{
+    0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
+    10%{ opacity:1; }
+    100%{ opacity:0; transform:translate(var(--dx,0px), 95px) rotate(var(--rot,360deg)); }
+  }
+
+  #cat-visitor{
+    position:absolute; bottom:106px; width:46px; z-index:5;
+    opacity:0; transform:translateY(8px) scale(.8); pointer-events:none;
+    transition: opacity .4s ease, transform .4s ease, left .5s ease;
+  }
+  #cat-visitor.show{ opacity:1; transform:translateY(0) scale(1); }
+  #cat-visitor .cv-tail{ transform-box: fill-box; transform-origin: 80% 90%; animation: tailWag 1.1s ease-in-out infinite alternate; }
+
+  #fireworks-layer{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    z-index:1; overflow:hidden; pointer-events:none;
+  }
+  .firework{ position:absolute; width:0; height:0; }
+  .fw-rise{
+    position:absolute; bottom:0; left:-1.5px; width:3px; height:3px; border-radius:50%;
+    background: var(--fw-color); box-shadow:0 0 6px 2px var(--fw-color);
+    animation: fwRise var(--rise-t, .7s) cubic-bezier(.25,.6,.4,1) forwards;
+  }
+  @keyframes fwRise{
+    0%{ transform:translateY(0) scale(1); opacity:1; }
+    85%{ opacity:1; }
+    100%{ transform:translateY(var(--rise-h,-220px)) scale(.6); opacity:.9; }
+  }
+  .fw-flash{
+    position:absolute; top:0; left:0; width:14px; height:14px; margin:-7px 0 0 -7px;
+    border-radius:50%; background:#fff; opacity:0;
+    animation: fwFlash .5s ease-out forwards;
+    animation-delay: var(--rise-t, .7s);
+  }
+  @keyframes fwFlash{
+    0%{ transform:scale(.3); opacity:1; }
+    100%{ transform:scale(4.5); opacity:0; }
+  }
+  .fw-particle{
+    position:absolute; top:0; left:0; width:6px; height:6px; margin:-3px 0 0 -3px;
+    border-radius:50%; background: var(--fw-color); box-shadow:0 0 8px 2px var(--fw-color);
+    opacity:0;
+    animation: fwBurst 1.15s ease-out forwards;
+    animation-delay: var(--rise-t, .7s);
+  }
+  @keyframes fwBurst{
+    0%{ transform:rotate(var(--angle)) translateX(0) scale(1); opacity:1; }
+    12%{ opacity:1; }
+    100%{ transform:rotate(var(--angle)) translateX(var(--dist)) scale(.25); opacity:0; }
+  }
+  .fw-particle.sparkle{ animation-name: fwBurstSparkle; }
+  @keyframes fwBurstSparkle{
+    0%{ transform:rotate(var(--angle)) translateX(0) scale(1); opacity:1; }
+    12%{ opacity:1; }
+    60%{ opacity:1; }
+    100%{ transform:rotate(var(--angle)) translateX(calc(var(--dist) * 1.25)) translateY(30px) scale(.15); opacity:0; }
+  }
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="fireworks-layer"></div>
   <div id="clouds-layer"></div>
   <div id="stars-layer"></div>
   <svg class="bird bird-1" width="40" height="15" viewBox="0 0 40 15"><path d="M2,10 Q10,0 20,8 Q30,0 38,10" stroke="#1F3B4D" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
@@ -569,7 +679,7 @@
     <rect x="18" y="58" width="20" height="24" fill="#8FB6C4" stroke="#5c7d88" stroke-width="1.4"/>
     <rect x="60" y="58" width="20" height="24" fill="#8FB6C4" stroke="#5c7d88" stroke-width="1.4"/>
     <rect x="98" y="58" width="20" height="24" fill="#8FB6C4" stroke="#5c7d88" stroke-width="1.4"/>
-    <text x="65" y="94" font-family="Nunito, sans-serif" font-size="9" font-weight="800" fill="#1F3B4D" text-anchor="middle">UMUT HAPSEDİLEMEZ</text>
+    <text x="70" y="94" font-family="Nunito, sans-serif" font-size="10.5" font-weight="800" fill="#1F3B4D" text-anchor="middle">UMUT HAPSEDİLEMEZ</text>
     <rect x="18" y="100" width="20" height="24" fill="#8FB6C4" stroke="#5c7d88" stroke-width="1.4"/>
     <rect x="98" y="100" width="20" height="24" fill="#8FB6C4" stroke="#5c7d88" stroke-width="1.4"/>
     <rect x="52" y="98" width="36" height="46" rx="2" fill="#6b5636" stroke="#4a3a24" stroke-width="1.4"/>
@@ -623,14 +733,8 @@
 
       <!-- Çocuk: sadece 'kidwalk' pozunda görünür, aralarında el ele yürüyor -->
       <g class="kid-figure">
-        <g class="leg leg-l">
-          <rect x="53" y="83" width="5" height="9" rx="2" fill="#FFDD00" stroke="#C99A00" stroke-width="0.8"/>
-          <rect x="53" y="91" width="5" height="4" rx="1.5" fill="#FFD9B3"/>
-        </g>
-        <g class="leg leg-r">
-          <rect x="60" y="83" width="5" height="9" rx="2" fill="#FFDD00" stroke="#C99A00" stroke-width="0.8"/>
-          <rect x="60" y="91" width="5" height="4" rx="1.5" fill="#FFD9B3"/>
-        </g>
+        <g class="leg leg-l"><rect x="53" y="83" width="5" height="12" rx="2.5" fill="#1F3B4D"/></g>
+        <g class="leg leg-r"><rect x="60" y="83" width="5" height="12" rx="2.5" fill="#1F3B4D"/></g>
         <rect x="51" y="65" width="14" height="20" rx="5" fill="#4CAF6D" stroke="#1F3B4D" stroke-width="1.5"/>
         <g class="kid-head">
           <ellipse cx="49.5" cy="57" rx="2" ry="2.6" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1"/>
@@ -775,6 +879,7 @@
     </button>
     <button id="car-btn" aria-label="95 numaralı araba" style="font-weight:800; font-size:14px; color:#c62828;">95</button>
     <button id="building-btn" aria-label="Merdivende otur" style="font-weight:800; font-size:17px; color:#1F3B4D;">G</button>
+    <button id="cake-btn" aria-label="Doğum günü pastası">🎂</button>
   </div>
   <div id="playlist-panel">
     <button id="playlist-close" aria-label="Kapat">✕</button>
@@ -786,6 +891,81 @@
   <div id="scare-bubble">!</div>
   <div id="cold-bubble">❄️</div>
   <div id="milestone">10 kalp! 💕</div>
+  <div id="cake-prop">
+    <svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg">
+      <text x="30" y="58" font-family="'Baloo 2', sans-serif" font-size="58" font-weight="800"
+        fill="#FBF6EC" stroke="#3B2412" stroke-width="3.4" text-anchor="middle">3</text>
+      <circle cx="24" cy="12" r="2.6" fill="#2B3A55"/>
+      <circle cx="31" cy="8" r="1.4" fill="#3B2412"/>
+      <circle cx="18" cy="18" r="2.3" fill="#2B3A55"/>
+      <circle cx="36" cy="14" r="2.6" fill="#2B3A55"/>
+      <circle cx="27" cy="22" r="1.3" fill="#E4E68A"/>
+      <circle cx="20" cy="27" r="1.4" fill="#3B2412"/>
+      <circle cx="32" cy="27" r="2.4" fill="#2B3A55"/>
+      <circle cx="39" cy="22" r="1.3" fill="#3B2412"/>
+      <circle cx="25" cy="34" r="2.5" fill="#2B3A55"/>
+      <circle cx="18" cy="38" r="1.3" fill="#E4E68A"/>
+      <circle cx="31" cy="40" r="1.4" fill="#3B2412"/>
+      <circle cx="22" cy="45" r="2.5" fill="#2B3A55"/>
+      <circle cx="34" cy="46" r="1.4" fill="#3B2412"/>
+      <circle cx="27" cy="51" r="2.3" fill="#2B3A55"/>
+      <circle cx="19" cy="53" r="1.3" fill="#3B2412"/>
+      <circle cx="24" cy="59" r="1.3" fill="#E4E68A"/>
+      <circle cx="33" cy="58" r="2.5" fill="#2B3A55"/>
+      <circle cx="38" cy="53" r="1.4" fill="#3B2412"/>
+      <circle cx="21" cy="61" r="2.2" fill="#2B3A55"/>
+      <g class="candle">
+        <rect x="16" y="4" width="2.6" height="11" rx="1" fill="#e07a9e"/>
+        <ellipse class="flame" cx="17.3" cy="1.5" rx="2.1" ry="3.6" fill="#FFC93C"/>
+        <ellipse class="smoke" cx="17.3" cy="-1" rx="1.6" ry="2.4" fill="#cfcfcf"/>
+      </g>
+      <g class="candle">
+        <rect x="28.7" y="0" width="2.6" height="15" rx="1" fill="#7ac9e0"/>
+        <ellipse class="flame" cx="30" cy="-3" rx="2.1" ry="3.6" fill="#FFC93C"/>
+        <ellipse class="smoke" cx="30" cy="-5.5" rx="1.6" ry="2.4" fill="#cfcfcf"/>
+      </g>
+      <g class="candle">
+        <rect x="41.4" y="4" width="2.6" height="11" rx="1" fill="#a3d977"/>
+        <ellipse class="flame" cx="42.7" cy="1.5" rx="2.1" ry="3.6" fill="#FFC93C"/>
+        <ellipse class="smoke" cx="42.7" cy="-1" rx="1.6" ry="2.4" fill="#cfcfcf"/>
+      </g>
+    </svg>
+  </div>
+  <div id="kid-walker">
+    <svg viewBox="0 0 26 52" xmlns="http://www.w3.org/2000/svg">
+      <g class="kw-leg kw-leg-l"><rect x="8" y="34" width="4" height="14" rx="2" fill="#1F3B4D"/></g>
+      <g class="kw-leg kw-leg-r"><rect x="14" y="34" width="4" height="14" rx="2" fill="#1F3B4D"/></g>
+      <rect x="5" y="16" width="16" height="20" rx="6" fill="#4CAF6D" stroke="#1F3B4D" stroke-width="1.4"/>
+      <circle cx="13" cy="10" r="8" fill="#FFD9B3" stroke="#1F3B4D" stroke-width="1.4"/>
+      <path d="M5,10 Q4,-1 13,-2 Q22,-1 21,10 Q21.5,4 18.5,6.5 Q16.5,3 13,6.5 Q9.5,3 7.5,6.5 Q4.5,4 5,10 Z" fill="#8B6540" stroke="#6E4A2E" stroke-width="0.7"/>
+    </svg>
+  </div>
+  <div id="birthday-bubble">🎉 İyi ki doğdun Kuzey! 🎉</div>
+  <div id="cat-visitor">
+    <svg viewBox="0 0 46 36" xmlns="http://www.w3.org/2000/svg">
+      <g class="cv-tail"><path d="M40,20 Q46,14 43,6 Q42,14 36,18 Z" fill="#E8935A" stroke="#B5622C" stroke-width="1.2"/></g>
+      <rect x="10" y="26" width="4" height="8" rx="2" fill="#B5622C"/>
+      <rect x="18" y="26" width="4" height="8" rx="2" fill="#E8935A"/>
+      <rect x="26" y="26" width="4" height="8" rx="2" fill="#B5622C"/>
+      <rect x="32" y="26" width="4" height="8" rx="2" fill="#E8935A"/>
+      <ellipse cx="24" cy="20" rx="18" ry="10" fill="#E8935A" stroke="#B5622C" stroke-width="1.2"/>
+      <circle cx="9" cy="12" r="9" fill="#E8935A" stroke="#B5622C" stroke-width="1.2"/>
+      <path d="M2,7 L4,-2 L8,6 Z" fill="#E8935A" stroke="#B5622C" stroke-width="1.2"/>
+      <path d="M12,6 L16,-2 L14,7 Z" fill="#E8935A" stroke="#B5622C" stroke-width="1.2"/>
+      <circle cx="6" cy="11" r="1.2" fill="#1F3B4D"/>
+      <circle cx="12" cy="11" r="1.2" fill="#1F3B4D"/>
+      <g class="cat-collar">
+        <circle cx="11.3" cy="21" r="1.6" fill="#D9A521" stroke="#1F1608" stroke-width="0.4"/>
+        <circle cx="10.15" cy="19" r="1.6" fill="#D9A521" stroke="#1F1608" stroke-width="0.4"/>
+        <circle cx="7.85" cy="19" r="1.6" fill="#D9A521" stroke="#1F1608" stroke-width="0.4"/>
+        <circle cx="6.7" cy="21" r="1.6" fill="#D9A521" stroke="#1F1608" stroke-width="0.4"/>
+        <circle cx="7.85" cy="23" r="1.6" fill="#D9A521" stroke="#1F1608" stroke-width="0.4"/>
+        <circle cx="10.15" cy="23" r="1.6" fill="#D9A521" stroke="#1F1608" stroke-width="0.4"/>
+        <circle cx="9" cy="21" r="1.3" fill="#B5622C" stroke="#1F1608" stroke-width="0.35"/>
+        <ellipse cx="9" cy="26" rx="3.8" ry="1.9" fill="#4CAF50" stroke="#1F3B4D" stroke-width="0.35"/>
+      </g>
+    </svg>
+  </div>
 </div>
 
 
@@ -809,6 +989,7 @@
   const kissBtn = document.getElementById('kiss-btn');
   const benchBtn = document.getElementById('bench-btn');
   const giftBtn = document.getElementById('gift-btn');
+  const catVisitor = document.getElementById('cat-visitor');
   const angryBtn = document.getElementById('angry-btn');
   let angry = false;
   const dreamBtn = document.getElementById('dream-btn');
@@ -832,6 +1013,11 @@
   let binbinActive = false;
   const kidBtn = document.getElementById('kid-btn');
   let kidActive = false;
+  const cakeBtn = document.getElementById('cake-btn');
+  const cakeProp = document.getElementById('cake-prop');
+  const kidWalker = document.getElementById('kid-walker');
+  const birthdayBubble = document.getElementById('birthday-bubble');
+  let birthdayActive = false;
   const popsicleBtn = document.getElementById('popsicle-btn');
   let holdHandsActive = false;
   const carBtn = document.getElementById('car-btn');
@@ -1092,7 +1278,7 @@
   playlistClose.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function doKiss(){
-    if (kissing) return;
+    if (kissing || birthdayActive) return;
     kissing = true;
     charWrap.classList.remove('running');
     charWrap.classList.add('kissing');
@@ -1108,7 +1294,7 @@
   kissBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function requestBench(){
-    if (benchPending || sitting) return;
+    if (benchPending || sitting || birthdayActive) return;
     benchPending = true;
     setTimeout(() => {
       spawnBench();
@@ -1119,7 +1305,7 @@
   benchBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function requestBinBin(){
-    if (binbinPending || binbinActive || sitting || kissing || kidActive || holdHandsActive || carActive) return;
+    if (binbinPending || binbinActive || sitting || kissing || kidActive || holdHandsActive || carActive || birthdayActive) return;
     binbinPending = true;
     setTimeout(() => {
       binbinPending = false;
@@ -1147,23 +1333,162 @@
   }
 
   function requestKid(){
-    if (kidActive || sitting || kissing || binbinActive || holdHandsActive || carActive) return;
+    if (kidActive || sitting || kissing || binbinActive || holdHandsActive || carActive || birthdayActive) return;
     kidActive = true;
     charWrap.classList.add('kidwalk');
     spawnPop();
     setTimeout(spawnPop, 5000);
     setTimeout(spawnPop, 10000);
     setTimeout(() => {
-      charWrap.classList.remove('kidwalk');
       kidActive = false;
+      if (!birthdayActive){
+        charWrap.classList.remove('kidwalk');
+      }
     }, 15000);
   }
   kidBtn.addEventListener('click', (e) => { e.stopPropagation(); requestKid(); });
   kidBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
+  function spawnConfetti(){
+    const colors = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#FF9F1C','#C77DFF'];
+    for (let i = 0; i < 18; i++){
+      const el = document.createElement('div');
+      el.className = 'confetti-piece burst';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.left = (180 + Math.random() * 70) + 'px';
+      el.style.bottom = (210 + Math.random() * 30) + 'px';
+      el.style.setProperty('--dx', (Math.random() * 100 - 50) + 'px');
+      el.style.setProperty('--rot', (Math.random() * 360 + 180) + 'deg');
+      el.style.animationDelay = (Math.random() * 0.3) + 's';
+      stage.appendChild(el);
+      setTimeout(() => el.remove(), 1900);
+    }
+  }
+
+  const fireworksLayer = document.getElementById('fireworks-layer');
+  const FIREWORK_COLORS = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#FF9F1C','#C77DFF','#FF4D9D','#4DD9FF'];
+
+  function spawnFirework(xPercent, yPercent, color, big){
+    const fw = document.createElement('div');
+    fw.className = 'firework';
+    fw.style.left = xPercent + '%';
+    fw.style.top = yPercent + '%';
+    fw.style.setProperty('--fw-color', color);
+    const riseT = 0.55 + Math.random() * 0.25;
+    fw.style.setProperty('--rise-t', riseT + 's');
+    fw.style.setProperty('--rise-h', -(70 + Math.random() * 40) + 'px');
+
+    const rise = document.createElement('div');
+    rise.className = 'fw-rise';
+    fw.appendChild(rise);
+
+    const flash = document.createElement('div');
+    flash.className = 'fw-flash';
+    fw.appendChild(flash);
+
+    const count = big ? 20 : 13;
+    const dist = big ? 60 + Math.random() * 30 : 38 + Math.random() * 20;
+    for (let i = 0; i < count; i++){
+      const p = document.createElement('div');
+      p.className = 'fw-particle' + (i % 3 === 0 ? ' sparkle' : '');
+      p.style.setProperty('--angle', (i * (360 / count)) + 'deg');
+      p.style.setProperty('--dist', dist + 'px');
+      fw.appendChild(p);
+    }
+
+    fireworksLayer.appendChild(fw);
+    setTimeout(() => fw.remove(), (riseT + 1.3) * 1000);
+  }
+
+  function spawnFireworksShow(){
+    const spots = [
+      {x:12, y:20}, {x:32, y:12}, {x:55, y:16}, {x:75, y:10}, {x:90, y:22},
+      {x:22, y:28}, {x:65, y:24}, {x:42, y:8}
+    ];
+    let i = 0;
+    const burstsCount = 9;
+    const timer = setInterval(() => {
+      const spot = spots[Math.floor(Math.random() * spots.length)];
+      const color = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)];
+      spawnFirework(spot.x + (Math.random() * 8 - 4), spot.y + (Math.random() * 6 - 3), color, i % 2 === 0);
+      i++;
+      if (i >= burstsCount) clearInterval(timer);
+    }, 260);
+  }
+
+  function startBirthday(){
+    if (birthdayActive || sitting || kissing || binbinActive || holdHandsActive || carActive) return;
+    birthdayActive = true;
+    const savedSpeed = speed;
+    speed = 0;
+    charWrap.classList.remove('running');
+    charWrap.classList.add('cheering');
+
+    cakeProp.classList.add('show');
+    kidWalker.style.left = '150px';
+    kidWalker.classList.remove('blowing');
+    kidWalker.classList.add('show', 'walking');
+    catVisitor.style.left = '270px';
+    catVisitor.classList.add('show');
+    spawnPop();
+    petCat();
+
+    // çocuk pastaya doğru yürüsün
+    setTimeout(() => {
+      kidWalker.style.left = '188px';
+    }, 60);
+
+    // kedi pastanın sağına geçsin
+    setTimeout(() => {
+      catVisitor.style.left = '236px';
+    }, 300);
+
+    // çocuk pastanın önüne varınca mumlara üflesin
+    setTimeout(() => {
+      kidWalker.classList.remove('walking');
+      kidWalker.classList.add('blowing');
+    }, 1250);
+
+    setTimeout(() => {
+      cakeProp.classList.add('blown');
+      birthdayBubble.classList.add('show');
+      spawnConfetti();
+      spawnFireworksShow();
+      spawnPop();
+      petCat();
+      setTimeout(spawnPop, 200);
+      setTimeout(petCat, 500);
+      setTimeout(spawnPop, 650);
+    }, 1900);
+
+    setTimeout(() => {
+      birthdayBubble.classList.remove('show');
+    }, 5800);
+
+    // çocuk gruba geri dönsün
+    setTimeout(() => {
+      kidWalker.classList.remove('blowing');
+      kidWalker.classList.add('walking');
+      kidWalker.style.left = '150px';
+      catVisitor.style.left = '270px';
+    }, 6100);
+
+    setTimeout(() => {
+      kidWalker.classList.remove('show', 'walking');
+      cakeProp.classList.remove('show', 'blown');
+      catVisitor.classList.remove('show');
+      charWrap.classList.remove('cheering');
+      charWrap.classList.add('running');
+      speed = savedSpeed;
+      birthdayActive = false;
+    }, 7300);
+  }
+  cakeBtn.addEventListener('click', (e) => { e.stopPropagation(); startBirthday(); });
+  cakeBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
   let popsicling = false;
   function doPopsicle(){
-    if (popsicling || sitting || kissing || binbinActive || kidActive || carActive) return;
+    if (popsicling || sitting || kissing || binbinActive || kidActive || carActive || birthdayActive) return;
     popsicling = true;
 
     const item = document.createElement('div');
@@ -1216,7 +1541,7 @@
   popsicleBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function requestCar(){
-    if (carPending || carActive || sitting || kissing || binbinActive || kidActive || holdHandsActive) return;
+    if (carPending || carActive || sitting || kissing || binbinActive || kidActive || holdHandsActive || birthdayActive) return;
     carPending = true;
     setTimeout(() => {
       carPending = false;
