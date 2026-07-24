@@ -105,6 +105,19 @@
 
   #char-wrap.snug .male-figure{ transform: translate(6px,0); transition: transform .4s ease; }
   #char-wrap.snug .female-figure{ transform: translate(-6px,0); transition: transform .4s ease; }
+
+  .umbrella-group{ opacity:0; transition: opacity .4s ease; }
+  #char-wrap.raining .umbrella-group{ opacity:1; }
+
+  .rain-drop{
+    position:absolute; top:-24px; width:2px; height:16px; z-index:6; pointer-events:none;
+    background:linear-gradient(to bottom, rgba(190,220,255,0), rgba(190,220,255,.85));
+  }
+  .rain-drop.fall{ animation: rainFall linear forwards; }
+  @keyframes rainFall{
+    from{ transform:translateY(0); opacity:.9; }
+    to{ transform:translateY(420px); opacity:.25; }
+  }
   #char-wrap.sitting.snug{ transform: translate(93px,-22px); transition: transform .5s ease; }
 #char-wrap.sitting.snug .female-head{ transform:translate(0,0) rotate(0deg); }
 
@@ -710,6 +723,14 @@
           </g>
         </g>
       </g>
+      <g class="umbrella-group">
+        <line x1="57" y1="8" x2="57" y2="34" stroke="#5c3a1e" stroke-width="2"/>
+        <path d="M57,34 Q57,40 63,40" fill="none" stroke="#5c3a1e" stroke-width="2" stroke-linecap="round"/>
+        <path d="M16,8 Q16,-14 57,-14 Q98,-14 98,8 Q88,1 78,8 Q68,1 57,8 Q46,1 36,8 Q26,1 16,8 Z"
+          fill="#e0392e" stroke="#7a1913" stroke-width="1.6"/>
+        <path d="M16,8 Q16,-14 57,-14 Q98,-14 98,8" fill="none" stroke="#f0857c" stroke-width="1.4" opacity="0.7"/>
+        <circle cx="57" cy="-14.5" r="2.2" fill="#5c3a1e"/>
+      </g>
     </svg>
     <div id="dream-bubble"><span class="dream-icon">💗</span></div>
     <div id="dream-bubble-l" class="mini-dream"><span class="dream-icon">💭</span></div>
@@ -775,6 +796,7 @@
     </button>
     <button id="car-btn" aria-label="95 numaralı araba" style="font-weight:800; font-size:14px; color:#c62828;">95</button>
     <button id="building-btn" aria-label="Merdivende otur" style="font-weight:800; font-size:17px; color:#1F3B4D;">G</button>
+    <button id="rain-btn" aria-label="Yağmur/şemsiye">🌧️</button>
   </div>
   <div id="playlist-panel">
     <button id="playlist-close" aria-label="Kapat">✕</button>
@@ -842,6 +864,8 @@
   let buildingDuskActive = false;
   let carActive = false;
   let cars = [];
+  const rainBtn = document.getElementById('rain-btn');
+  let rainActive = false;
 
   const HEART_EMOJIS = ['💗','💖','💕','❤️','💞'];
   const GROUND_H = 106;
@@ -1119,7 +1143,7 @@
   benchBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function requestBinBin(){
-    if (binbinPending || binbinActive || sitting || kissing || kidActive || holdHandsActive || carActive) return;
+    if (binbinPending || binbinActive || sitting || kissing || kidActive || holdHandsActive || carActive || rainActive) return;
     binbinPending = true;
     setTimeout(() => {
       binbinPending = false;
@@ -1147,7 +1171,7 @@
   }
 
   function requestKid(){
-    if (kidActive || sitting || kissing || binbinActive || holdHandsActive || carActive) return;
+    if (kidActive || sitting || kissing || binbinActive || holdHandsActive || carActive || rainActive) return;
     kidActive = true;
     charWrap.classList.add('kidwalk');
     spawnPop();
@@ -1163,7 +1187,7 @@
 
   let popsicling = false;
   function doPopsicle(){
-    if (popsicling || sitting || kissing || binbinActive || kidActive || carActive) return;
+    if (popsicling || sitting || kissing || binbinActive || kidActive || carActive || rainActive) return;
     popsicling = true;
 
     const item = document.createElement('div');
@@ -1216,7 +1240,7 @@
   popsicleBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
   function requestCar(){
-    if (carPending || carActive || sitting || kissing || binbinActive || kidActive || holdHandsActive) return;
+    if (carPending || carActive || sitting || kissing || binbinActive || kidActive || holdHandsActive || rainActive) return;
     carPending = true;
     setTimeout(() => {
       carPending = false;
@@ -1539,6 +1563,40 @@
   coldBtn.addEventListener('click', (e) => { e.stopPropagation(); doCold(); });
   coldBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
+  function spawnRainDrop(){
+    const d = document.createElement('div');
+    d.className = 'rain-drop fall';
+    d.style.left = (Math.random() * 100) + '%';
+    const dur = 0.55 + Math.random() * 0.4;
+    d.style.animationDuration = dur + 's';
+    stage.appendChild(d);
+    setTimeout(() => d.remove(), dur * 1000 + 50);
+  }
+
+  function doRain(){
+    if (rainActive || sitting || kissing || binbinActive || kidActive || carActive || holdHandsActive || coldActive) return;
+    rainActive = true;
+    charWrap.classList.add('snug');
+    charWrap.classList.add('raining');
+    spawnPop();
+
+    const rainTimer = setInterval(() => {
+      if (!rainActive){ clearInterval(rainTimer); return; }
+      spawnRainDrop();
+      spawnRainDrop();
+      spawnRainDrop();
+    }, 90);
+
+    setTimeout(() => {
+      clearInterval(rainTimer);
+      charWrap.classList.remove('snug');
+      charWrap.classList.remove('raining');
+      rainActive = false;
+    }, 9000);
+  }
+  rainBtn.addEventListener('click', (e) => { e.stopPropagation(); doRain(); });
+  rainBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
   function doGift(){
     if (gifting) return;
     gifting = true;
@@ -1711,7 +1769,7 @@
       charWrap.style.bottom = (GROUND_H + charY) + 'px';
       charWrap.classList.remove('running');
     } else {
-      if (!kissing && !sitting && !comforting && !feeding && !binbinActive && !carActive) charWrap.classList.add('running');
+      if (!kissing && !sitting && !comforting && !feeding && !binbinActive && !carActive && !rainActive) charWrap.classList.add('running');
     }
 
     lastSpawn += dt;
