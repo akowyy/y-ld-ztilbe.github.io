@@ -291,6 +291,19 @@
   #cat-wrap.petted{ animation: catPet .4s ease-out; transform-origin: 135px 80px; }
   @keyframes catPet{ 0%{ transform:scale(1); } 45%{ transform:scale(1.18); } 100%{ transform:scale(1); } }
 
+  #char-wrap.singing #cat-wrap{
+    animation: catDance .3s ease-in-out infinite;
+    transform-box: fill-box; transform-origin: 135px 98px;
+  }
+  @keyframes catDance{
+    0%{ transform: translateY(0) rotate(-6deg); }
+    50%{ transform: translateY(-6px) rotate(6deg); }
+    100%{ transform: translateY(0) rotate(-6deg); }
+  }
+  #char-wrap.singing .cat-tail{
+    animation: tailWag .22s ease-in-out infinite alternate;
+  }
+
   .collectible{ position:absolute; bottom:106px; font-size:38px; z-index:4; line-height:1; filter:drop-shadow(0 3px 2px rgba(0,0,0,.25)); animation:bob 1.4s ease-in-out infinite; }
   @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
 
