@@ -635,10 +635,54 @@
     transition:opacity .3s ease, transform .3s ease;
   }
   #chili-caption.show{ opacity:1; transform:translate(-50%, 0); }
+
+  #welcome-overlay{
+    position:absolute; top:0; left:0; width:100%; height:100%; z-index:50;
+    background:rgba(31,59,77,.72);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .5s ease;
+  }
+  #welcome-overlay.show{ opacity:1; pointer-events:auto; }
+  #welcome-card{
+    background:#FFFDF7; border-radius:24px; padding:32px 26px;
+    max-width:82%; width:360px; max-height:80vh; overflow-y:auto;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(0,0,0,.35);
+    transform:translateY(14px) scale(.96); transition:transform .5s ease;
+  }
+  #welcome-overlay.show #welcome-card{ transform:translateY(0) scale(1); }
+  #welcome-heart{ font-size:34px; margin-bottom:6px; }
+  #welcome-text{
+    font-family:'Nunito', sans-serif; font-weight:600; font-size:15.5px;
+    color:var(--ink); line-height:1.65; white-space:pre-line; text-align:left;
+  }
+  #welcome-close{
+    margin-top:20px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FF8C42,#FFC94A);
+    color:#fff; font-family:'Baloo 2', sans-serif; font-weight:700; font-size:15px;
+    padding:10px 26px; border-radius:20px;
+    box-shadow:0 4px 12px rgba(255,140,66,.4);
+  }
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="welcome-overlay">
+    <div id="welcome-card">
+      <div id="welcome-heart">💌</div>
+      <div id="welcome-text">Bu oyun aslında sadece bir kişi beğensin diye yapıldı. Yani senin beğenmen benim için o kadar önemli ki...
+
+Aramız kötü olduğundan beri uykusuz kalıyorum ama umarım beni anlayacaksın. Seni kırdığım için çok üzgünüm.
+
+Mükemmel biri değilim, biliyorum. Ama senin için mükemmel çaba gösterebilecek biriyim; çünkü hayatımda hiçbir şey senden daha değerli değil.
+
+Geriye dönüp baktığımızda, bu ilişkiyi tüm zorluklara rağmen birlikte, güzel bir şekilde inşa etmiş olduğumuzu görmeyi her şeyden çok istiyorum.
+
+Not: Seni seviyorum ve bu sonsuza kadar bu yazıyla beraber burada duracak...</div>
+      <button id="welcome-close">Bende seni seviyorum</button>
+    </div>
+  </div>
   <div id="clouds-layer"></div>
   <div id="stars-layer"></div>
   <svg class="bird bird-1" width="40" height="15" viewBox="0 0 40 15"><path d="M2,10 Q10,0 20,8 Q30,0 38,10" stroke="#1F3B4D" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
@@ -2175,6 +2219,17 @@
   })();
 
   requestAnimationFrame(loop);
+
+  // ---- Açılışta karşılama yazısı ----
+  (function showWelcome(){
+    const overlay = document.getElementById('welcome-overlay');
+    const closeBtn = document.getElementById('welcome-close');
+    if (!overlay || !closeBtn) return;
+    requestAnimationFrame(() => overlay.classList.add('show'));
+    const dismiss = () => overlay.classList.remove('show');
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); dismiss(); });
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+  })();
 })();
 </script>
 </body>
